@@ -1,0 +1,97 @@
+import tkinter
+
+class Paint(tkinter.Frame):
+
+    def __init__(self, parent):
+        tkinter.Frame.__init__(self, parent)
+
+        self.Parent = parent
+        self.ColorBrush = "blue"
+        self.SizeBrush = 1
+        self.MyLabel = None
+        self.MyLabelSize = None
+        self.SetMyGUI()
+
+    def SetColor(self, ColorBrush):
+        self.ColorBrush = ColorBrush
+        self.MyLabel["bg"] = ColorBrush
+
+    def SetBrushSize(self, SizeBrush):
+        self.SizeBrush = SizeBrush
+        self.MyLabelSize["font"] = "Arial 1"+str(self.SizeBrush)
+
+    def SetMyLabel(self, MyLabel):
+        self.MyLabel = MyLabel
+        self.MyLabel["bg"] = self.ColorBrush
+
+    def SetMyLabelSize(self, MyLabelSize):
+        self.MyLabelSize = MyLabelSize
+        self.MyLabelSize["font"] = "Arial 1"+str(self.SizeBrush)
+
+    def draw(self, event):
+        self.canv.create_oval(event.x - self.SizeBrush,
+                              event.y - self.SizeBrush,
+                              event.x + self.SizeBrush,
+                              event.y + self.SizeBrush,
+                              fill=self.ColorBrush, outline=self.ColorBrush)
+
+    def SetMyGUI(self):
+        # Встановлюємо назву вікна
+        self.Parent.title("Мій Paint")
+        # Розміщуємо активні елементи на батьківському вікні
+        self.pack(fill=tkinter.BOTH, expand=1)
+        # Даємо можливість розтягуватися
+        self.columnconfigure(6, weight=1)
+        self.rowconfigure(2, weight=1)
+        # Створюємо поле для малювання на білому фоні
+        self.canv = tkinter.Canvas(self, bg="white")
+        # Прикріплюємо canvas методом grid
+        self.canv.grid(row=2, column=0, columnspan=7,
+                       padx=5, pady=5, sticky=tkinter.E+tkinter.W+tkinter.S+tkinter.N)
+        # Прив'язуємо обробник <B1-Motion> "при русі затиснутою лівої кнопки миші" викликати функцію draw
+        self.canv.bind("<B1-Motion>", self.draw)
+
+        MyLabel = tkinter.Label(self, text="Колір: ")
+        self.SetMyLabel(MyLabel)
+        # Встановлюємо напис в перший ряд і колонку, горизонтальний відступ в 10 пікселів
+        MyLabel.grid(row=0, column=0, padx=10)
+        # Створюємо кнопку з установкою тексту, ширина 12 символів, функція SetColor викликається при натисканні кнопки.
+        MyBlueButton = tkinter.Button(self, text="Cиній", width=12,
+                         command=lambda: self.SetColor("Blue"))
+        MyBlueButton.grid(row=0, column=1) # Виводимо кнопку
+
+        MyGreenButton = tkinter.Button(self, text="Зелений", width=12,
+                         command=lambda: self.SetColor("Green"))
+        MyGreenButton.grid(row=0, column=2)
+
+        MyRedButton = tkinter.Button(self, text="Червоний", width=12,
+                         command=lambda: self.SetColor("Red"))
+        MyRedButton.grid(row=0, column=3)
+
+        MyClearButton = tkinter.Button(self, text="Очистити все", width=12,
+                         command=lambda: self.canv.delete("all"))
+        MyClearButton.grid(row=0, column=4)
+
+        MyLabelSize = tkinter.Label(self, text="Розмір: ")
+        self.SetMyLabelSize(MyLabelSize)
+        MyLabelSize.grid(row=1, column=0, padx=10)
+
+        MyFirstButton = tkinter.Button(self, text="Перший", width=12,
+                         command=lambda: self.SetBrushSize(1))
+        MyFirstButton.grid(row=1, column=1)
+
+        MySecondButton = tkinter.Button(self, text="Другий", width=12,
+                         command=lambda: self.SetBrushSize(2))
+        MySecondButton.grid(row=1, column=2)
+
+        MyFifthButton = tkinter.Button(self, text="П'ятий", width=12,
+                         command=lambda: self.SetBrushSize(5))
+        MyFifthButton.grid(row=1, column=3)
+
+def main():
+    MyTk = tkinter.Tk()
+    MyTk.geometry("1000x600+500+500") # widthxheight+x+y
+    MyApp = Paint(MyTk)
+    MyTk.mainloop()
+
+main()
