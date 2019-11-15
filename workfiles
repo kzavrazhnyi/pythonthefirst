@@ -1,0 +1,96 @@
+# try:
+#     MyFile = open("C:\python\myfile.txt", "w")
+#     try:
+#         MyFile.write("Я програміст!")
+#     except Exception as e:
+#         print(e)
+#     finally:
+#         MyFile.close()
+# except Exception as ex:
+#     print(ex)
+
+# with open("C:\python\myfile.txt", "w") as MyFile:
+#     MyFile.write("Я програміст!")
+
+# with open("C:\python\myfile.txt", "a") as MyFile:
+#     MyFile.write("\nГарного уроку!")
+
+# with open("C:\python\myfile.txt", "a") as MyFile:
+#     print("\nУспіхів!", file=MyFile)
+
+# with open("C:\python\myfile.txt", "r") as MyFile:
+#     for counter in MyFile:
+#         print(counter, end="")
+
+# with open("C:\python\myfile.txt", "r") as MyFile:
+#     MyString1 = MyFile.readline()
+#     print(MyString1, end="")
+#     MyString2 = MyFile.readline()
+#     print(MyString2)
+
+# with open("C:\python\myfile.txt", "r") as MyFile:
+#     counter = MyFile.readline()
+#     while counter:
+#         print(counter, end="")
+#         counter = MyFile.readline()
+
+# with open("C:\python\myfile.txt", "r") as MyFile:
+#     MyText = MyFile.read()
+#     print(MyText)
+
+# with open("C:\python\myfile.txt", "r") as MyFile:
+#     MyContent = MyFile.readlines()
+#     MyString1 = MyContent[0]
+#     MyString2 = MyContent[1]
+#     print(MyString1, end="")
+#     print(MyString2)
+
+# MyFileName = "C:\python\myfile.txt"
+# with open(MyFileName, "w", encoding="utf8") as MyFile:
+#     MyFile.write("Я програміст!")
+# with open(MyFileName, "r", encoding="utf8") as MyFile:
+#     MyText = MyFile.read()
+#     print(MyText)
+
+# MyFileName = "C:\python\myfile.txt"
+# MyStringList = list()
+#
+# for counter in range(5):
+#     MyString = input("Введіть строку " + str(counter + 1) + ": ")
+#     MyStringList.append(MyString + "\n")
+#
+# # Запис списку в файл
+# with open(MyFileName, "a", encoding="utf8") as MyFile:
+#     MyFile.write("\n")
+#     for MyString in MyStringList:
+#         MyFile.write(MyString)
+#
+# # Читання строк з файлу
+# print("Строки файлу:")
+# with open(MyFileName, "r", encoding="utf8") as MyFile:
+#     for MyString in MyFile:
+#         print(MyString, end="")
+
+# import csv
+#
+# MyFileName = "C:\python\myfile.csv"
+#
+# frends = [
+#     ["Саша", 1],
+#     ["Микола", 2],
+#     ["Олена", 3]
+# ]
+#
+# with open(MyFileName, "w", newline="") as MyFile:
+#     MyCsv = csv.writer(MyFile)
+#     MyCsv.writerows(frends)
+#
+# with open(MyFileName, "a", newline="") as MyFile:
+#     MyFrend = ["Вова", 4]
+#     MyCsv = csv.writer(MyFile)
+#     MyCsv.writerow(MyFrend)
+#
+# with open(MyFileName, "r", newline="") as MyFile:
+#     MyCsv = csv.reader(MyFile)
+#     for counter in MyCsv:
+#         print(counter[0], " - ", counter[1])
