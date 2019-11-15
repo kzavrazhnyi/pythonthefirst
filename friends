@@ -1,0 +1,52 @@
+# import csv
+# 
+# MyFileName = "C:\python\myfile.csv"
+# 
+# MyFriends = [
+#     {"name": "Саша", "number": 1},
+#     {"name": "Микола", "number": 2},
+#     {"name": "Олена", "number": 3}
+# ]
+# 
+# with open(MyFileName, "w", newline="") as MyFile:
+#     MyColumns = ["name", "number"]
+#     MyCsv = csv.DictWriter(MyFile, fieldnames=MyColumns)
+#     MyCsv.writeheader()
+# 
+#     # записуємо списки списків (write down lists of lists)
+#     MyCsv.writerows(MyFriends)
+# 
+#     MyFriend = {"name": "Вова", "number": 4}
+#     # записуємо один рядок (write one line)
+#     MyCsv.writerow(MyFriend)
+# 
+# with open(MyFileName, "r", newline="") as MyFile:
+#     MyReader = csv.DictReader(MyFile)
+#     for counter in MyReader:
+#         print(counter["name"], "-", counter["number"])
+ 
+# import pickle
+# MyFileName = "C:\python\myfile.dat"
+# name = "Саша"
+# number = 1
+# with open(MyFileName, "wb") as MyFile:
+#     pickle.dump(name, MyFile)
+#     pickle.dump(number, MyFile)
+# with open(MyFileName, "rb") as MyFile:
+#     name = pickle.load(MyFile)
+#     number = pickle.load(MyFile)
+#     print("Ім'я:", name, "\tНомер:", number)
+ 
+# import pickle
+# MyFileName = "C:\python\myfile.dat"
+# MyFriends = [
+#     ["Саша", 1, "Хлопець"],
+#     ["Микола", 2, "Хлопець"],
+#     ["Олена", 3, "Дівчинка"]
+# ]
+# with open(MyFileName, "wb") as MyFile:
+#     pickle.dump(MyFriends, MyFile)
+# with open(MyFileName, "rb") as MyFile:
+#     MyFriendsFile = pickle.load(MyFile)
+#     for MyFriend in MyFriendsFile:
+#         print("Ім'я:", MyFriend[0], "\tНомер:", MyFriend[1], "\tСтать:", MyFriend[2])
