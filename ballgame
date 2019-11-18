@@ -1,0 +1,71 @@
+import tkinter, random, time
+# Створюємо клас для м'яча (Create a ball class)
+class MyBall:
+
+    def __init__(self, canvas, color):
+        self.MyCanvas = canvas
+        self.MyOval = MyCanvas.create_oval(12, 12, 30, 30, fill=color)
+        self.MyCanvas.move(self.MyOval, 250, 400)
+        self.MyX = -2
+        self.MyY = -2
+        self.CanvasHeight = self.MyCanvas.winfo_height() - 3
+        self.CanvasWidth = self.MyCanvas.winfo_height() - 3
+
+    def draw(self, MyRectangle):
+        self.MyCanvas.move(self.MyOval, self.MyX, self.MyY)
+        MyRandom = random.randint(2,4)
+        # Отримуємо список координат для елемента (We get the list of coordinates for the element)
+        MyPos = self.MyCanvas.coords(self.MyOval)
+        MyPosRectangle = self.MyCanvas.coords(MyRectangle)
+        if MyPos[1] <= 3 or MyPos[3] >= self.CanvasHeight \
+                or (MyPos[3] >= MyPosRectangle[1]
+                and MyPos[0] > MyPosRectangle[0] and MyPos[2] < MyPosRectangle[2]):
+                    self.MyY = self.MyY * (-1)
+        if MyPos[0] <= 3 or MyPos[2] >= self.CanvasWidth:
+            if self.MyX > 0:
+                self.MyX = MyRandom * (-1)
+            else:
+                self.MyX = MyRandom
+
+        # Задаємо заголовок (set the title)
+        MyTK.title("My game: "+str(MyPos[1])+"x"+str(MyPos[0])+" "+str(MyPos[3])+"x"+str(MyPos[2]))
+
+MyTK = tkinter.Tk()
+# Розмір вікна фіксований (Fixed window size)
+MyTK.resizable(0, 0)
+# Вікно з полотном розмістити поверх всіх інших вікон
+# (Place a window with a canvas on top of all other windows)
+MyTK.wm_attributes("-topmost", 1)
+# Аргументи bd = 0 і highlightthickness = 0 щоб навколо полотна не було рамки
+# (Arguments bd = 0 and highlightthickness = 0 so that there is no frame around the canvas)
+MyCanvas = tkinter.Canvas(MyTK, width=500, height=500, bd=0,
+                        highlightthickness=0)
+# Полотно змінить розмір відповідно до значень ширини і висоти
+# (the canvas will resize according to the width and height)
+MyCanvas.pack()
+MyTK.update()
+
+MyRectangle = MyCanvas.create_rectangle(0, 0, 200, 10, fill="green")
+MyCanvas.move(MyRectangle, 150, 450)
+
+MyBlueBall = MyBall(MyCanvas, 'Blue')
+MyGreenBall = MyBall(MyCanvas, 'Green')
+MyRedBalln = MyBall(MyCanvas, 'Red')
+
+MyRandom = 0; Counter = 0
+while True:
+    Counter = Counter + 1
+    if Counter == 150:
+        Counter = 0
+        if MyRandom > 0:
+            MyRandom = MyRandom * (-1)
+        else:
+            MyRandom = random.randint(0, 250)
+        MyCanvas.move(MyRectangle, MyRandom, 0)
+    MyBlueBall.draw(MyRectangle)
+    MyGreenBall.draw(MyRectangle)
+    MyRedBalln.draw(MyRectangle)
+    MyTK.update_idletasks()
+    MyTK.update()
+    time.sleep(0.005)
+MyTK.mainloop()
