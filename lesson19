@@ -1,0 +1,95 @@
+# import tkinter
+# from tkinter import messagebox
+#
+# def ShowMyMessage():
+#     messagebox.showinfo("Моє повідомлення", MyMessage.get())
+#
+# MyTk = tkinter.Tk()
+# MyTk.title("Поле введення Entry")
+# MyTk.geometry("200x100")
+#
+# MyMessage = tkinter.StringVar()
+# MyMessageEntry = tkinter.Entry(textvariable=MyMessage)
+# MyMessageEntry.place(relx=.5, rely=.4, anchor="c")
+#
+# MyMessageButton = tkinter.Button(text="Показати повідомлення", command=ShowMyMessage)
+# MyMessageButton.place(relx=.5, rely=.7, anchor="c")
+#
+# MyTk.mainloop()
+
+# import tkinter
+# from tkinter import messagebox
+#
+# def MyClear():
+#     MyNameEntry.delete(0, tkinter.END)
+#     MySurnameEntry.delete(0, tkinter.END)
+#
+# def ShowMyMessage():
+#     messagebox.showinfo("Поле введення Entry", MyNameEntry.get() + " " + MySurnameEntry.get())
+#
+# MyTk = tkinter.Tk()
+# MyTk.title("Поле введення Entry")
+#
+# MyNameLabel = tkinter.Label(text="Ім'я:")
+# MyNameLabel.grid(row=0, column=0, sticky="w")
+# MyNameEntry = tkinter.Entry()
+# MyNameEntry.grid(row=0, column=1, padx=5, pady=5)
+#
+# MySurnameLabel = tkinter.Label(text="Прізвище:")
+# MySurnameLabel.grid(row=1, column=0, sticky="w")
+# MySurnameEntry = tkinter.Entry()
+# MySurnameEntry.grid(row=1, column=1, padx=5, pady=5)
+#
+# # Додаємо текст за замовчуванням (add default text)
+# MyNameEntry.insert(0, "Ім'я")
+# MySurnameEntry.insert(0, "Прізвище")
+#
+# MyMessageButton = tkinter.Button(text="Показати повідомлення", command=ShowMyMessage)
+# MyMessageButton.grid(row=2, column=0, padx=5, pady=5, sticky="e")
+# MyClearButton = tkinter.Button(text="Очистити", command=MyClear)
+# MyClearButton.grid(row=2, column=1, padx=5, pady=5, sticky="e")
+#
+# MyTk.mainloop()
+
+# import tkinter
+#
+# MyTk = tkinter.Tk()
+# MyTk.title("Елемент Checkbutton")
+# MyTk.geometry("300x300")
+#
+# MyChoice = tkinter.IntVar()
+# MyChoiceCheckbutton = tkinter.Checkbutton(text="My choice", variable=MyChoice, onvalue=1, offvalue=0, padx=15, pady=10)
+# MyChoiceCheckbutton.grid(row=0, column=0, sticky=tkinter.W)
+#
+# MyChoiceLabel = tkinter.Label(textvariable=MyChoice)
+# MyChoiceLabel.place(relx=.09, rely=.12, anchor="c")
+#
+# MyNewChoice = tkinter.IntVar()
+# MyNewChoiceCheckbutton = tkinter.Checkbutton(text="My new choice", variable=MyNewChoice,
+#                                              onvalue=1, offvalue=0, padx=15, pady=10)
+# MyNewChoiceCheckbutton.grid(row=1, column=0, sticky=tkinter.W)
+# MyNewChoiceLabel = tkinter.Label(textvariable=MyNewChoice)
+# MyNewChoiceLabel.place(relx=.09, rely=.26, anchor="c")
+#
+# MyTk.mainloop()
+
+# import locale
+#
+# locale.setlocale(locale.LC_ALL, "de")  # Німецький (Deutsch)
+#
+# MyNumber = 1122334455.66778899
+# FormatString = locale.format_string("%f", MyNumber)
+# print(FormatString)
+#
+# FormatString = locale.format_string("%.2f", MyNumber)
+# print(FormatString)
+#
+# FormatString = locale.format_string("%d", MyNumber)
+# print(FormatString)
+#
+# FormatString = locale.format_string("%e", MyNumber)
+# print(FormatString)
+#
+# MyMoney = 12345.6789
+# FormatString = locale.currency(MyMoney)
+# print(FormatString)
