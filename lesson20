@@ -1,0 +1,151 @@
+# import tkinter as tk
+#
+# def ShowLabel():
+#     global MyCharIndex, MyString, LetterList
+#     if MyCharIndex < len(MyString):
+#         LetterList[MyCharIndex].pack(side='left')
+#         LetterList[MyCharIndex].after(250, ShowLabel)
+#         MyCharIndex += 1
+#
+# MyTK = tk.Tk()
+# MyTK.geometry("200x100")
+#
+# MyString = " Happy New Year!"
+# LetterList = list()
+# for MyChar in MyString:
+#     LetterList.append(tk.Label(MyTK, text=MyChar))
+# MyCharIndex = 0
+# MyTK.after(250, ShowLabel)
+# MyTK.mainloop()
+
+# import tkinter as tk
+#
+# def ShowLabel():
+#     global MyCharIndex, MyString, LetterList
+#     if MyCharIndex < len(MyString):
+#         LetterList[MyCharIndex]['text'] = MyString[MyCharIndex]
+#         LetterList[MyCharIndex].after(250, ShowLabel)
+#         MyCharIndex += 1
+#
+# MyTK = tk.Tk()
+# MyTK.geometry("200x350")
+#
+# MyString = " Happy New Year!"
+# LetterList = list()
+# for index, value in enumerate(MyString):
+#     LetterList.append(tk.Label(MyTK))
+#     LetterList[index].pack()
+# MyCharIndex = 0
+# MyTK.after(250, ShowLabel)
+# MyTK.mainloop()
+
+# Міні завдання (Mini tasks)
+
+# Створіть список з 3 країн і збережіть у змінній MyCountries.
+# Створіть список з 5 міст і збережіть у змінній MyCities.
+# Об'єднайте два цих списку в змінної MyWorld і
+# надрукуйте значення цієї змінної
+# Create a list of 3 countries and save in the MyCountries variable.
+# Create a list of 5 cities and save in the MyCities variable.
+# Combine the two in the MyWorld variable and
+# print the value of this variable
+# MyCountries = ['Ukraine', 'Germany', 'France']
+# MyCities = ['Kiev', 'Kharkov', 'Lviv', 'Berlin', 'Paris']
+# MyWorld = MyCountries + MyCities
+# print(MyWorld)
+
+# Створіть змінні ім'я та прізвище.
+# За допомогою рядка з мітками %s надрукуйте,
+# наприклад: "Вітаю, моє ім'я (ваше ім'я) прізвище (ваше прізвище)"
+# Create the variables first and last name.
+# Using the string labeled %s, type
+# for example: "Hello, my first name (your first name) last name (your last name)"
+# MyName = 'Name'
+# MySurname = 'Surname'
+# print("Вітаю, моє ім'я %s прізвище %s!" % (MyName, MySurname))
+
+# Створіть полотно за допомогою функції Pen модуля turtle
+# і покажіть на ньому прямокутник.
+# Create a canvas using the Pen function of the turtle module
+# and show it a rectangle.
+# import turtle, time
+# MyPen = turtle.Pen()
+# MyPen.forward(100)
+# MyPen.left(90)
+# MyPen.forward(50)
+# MyPen.left(90)
+# MyPen.forward(100)
+# MyPen.left(90)
+# MyPen.forward(50)
+# time.sleep(5)
+
+# Створіть полотно та намалюйте треугольник 50, 100, 100 розгортаючи черепашку
+# на градус 104.47751218592992 та 151.04497562814015
+# Open the canvas and paint the triangle 50, 100, 100 and extend the turtle by
+# a degree of 104.47751218592992 and 151.04497562814015
+# import turtle, time
+# MyPen = turtle.Pen()
+# MyPen.forward(50)
+# MyPen.left(104.47751218592992)
+# MyPen.forward(100)
+# MyPen.left(151.04497562814015)
+# MyPen.forward(100)
+# time.sleep(5)
+
+# Створіть конструкцію if, яка перевіряє кількість
+# м'ячів змінної MyBall менше 10 або більше 50
+# і повідомляє "Мало" або "Багато"
+# Create an if construct that checks the quantity
+# MyBall balls less than 10 or more than 50
+# and reports "Little" or "Many"
+# MyBall = int(input("Кількість м'ячів: "))
+# if MyBall < 10:
+#     print("Мало!")
+# elif MyBall > 50:
+#     print("Багато!")
+# else:
+#     print("Так!")
+
+# Скільки грошей в діапазоні: від 100 до 200 або від 500 до 1000
+# How much money is in the range: from 100 to 200 or from 500 to 1000
+# MyMoney = int(input("Мої гроші: "))
+# if MyMoney >= 100 and MyMoney <= 200:
+#     print("від 100 до 200")
+# elif MyMoney >= 500 and MyMoney <= 1000:
+#     print("від 500 до 1000")
+# else:
+#     print("Мої гроші: "+str(MyMoney))
+
+# Надрукувати список з 5 країн за номером
+# Print a list of 5 countries by number
+# MyCountries = ['Ukraine', 'Germany', 'France', 'Spain', 'Italy']
+# x = 1
+# for i in MyCountries:
+#     print('%s %s' % (x, i))
+#     x = x + 1
+
+# Розрахувати вагу за 10 років збільшуючи по 2 кілограма на рік
+# Calculate weight for 10 years, increasing by 2 kilograms per year
+# MyWeight = 50
+# for year in range(1, 10):
+#     MyWeight = MyWeight + 2
+#     print('Year %s is %s' % (year, MyWeight))
+
+# # модуль pyautogui в python
+# # pyautogui module in python
+# import time, pyautogui
+# # робить паузу виконання програми на 2 секунди
+# # makes program execution pause for 2 sec
+# time.sleep(2)
+#
+# # переміщує мишу на 500, 500
+# # moves mouse to 500, 500
+# pyautogui.moveTo(500, 500, duration=1)
+#
+# # перетягує мишку 100, 0 відносно попереднього положення,
+# # drags the mouse 100, 0 relative to the previous position
+# pyautogui.dragRel(100, 0, duration=1)
+#
+# pyautogui.dragRel(0, 100, duration=1)
+# pyautogui.dragRel(-100, 0, duration=1)
+# pyautogui.dragRel(0, -100, duration=1)
