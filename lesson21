@@ -1,0 +1,67 @@
+# import tkinter, random, time
+#
+# class MyBall:
+#
+#     def __init__(self, canvas, color):
+#         self.MyCanvas = canvas
+#         self.MyOval = MyCanvas.create_oval(12, 12, 30, 30, fill=color)
+#         self.MyCanvas.move(self.MyOval, 230, 230)
+#         self.MyX = -2
+#         self.MyY = -2
+#
+#     def draw(self, MyRectangle):
+#         self.MyCanvas.move(self.MyOval, self.MyX, self.MyY)
+#         MyPos = self.MyCanvas.coords(self.MyOval)
+#         MyPosRectangle = self.MyCanvas.coords(MyRectangle)
+#         if MyPos[0] <= MyPosRectangle[0] or MyPos[2] >= MyPosRectangle[2]:
+#                 self.MyX = self.MyX * (-1)
+#         if MyPos[1] <= MyPosRectangle[1] or MyPos[3] >= MyPosRectangle[3]:
+#                 if self.MyY > 0:
+#                     self.MyY = random.randint(2,6)
+#                 self.MyY = self.MyY * (-1)
+#
+#         MyTK.title("My game: "+str(MyPos[1])+"x"+str(MyPos[0])+" "+str(MyPos[3])+"x"+str(MyPos[2]))
+#
+# MyTK = tkinter.Tk()
+# MyTK.resizable(0, 0)
+# MyTK.wm_attributes("-topmost", 1)
+# MyCanvas = tkinter.Canvas(MyTK, width=500, height=500)
+#
+# MyCanvas.pack()
+# MyTK.update()
+#
+# MyRectangle = MyCanvas.create_rectangle(0, 0, 300, 200, fill="green")
+# MyCanvas.move(MyRectangle, 100, 150)
+#
+# MyBlueBall = MyBall(MyCanvas, 'Blue')
+#
+# MyRandom = 0; Counter = 0
+# while True:
+#
+#     MyBlueBall.draw(MyRectangle)
+#     MyTK.update_idletasks()
+#     MyTK.update()
+#     time.sleep(0.005)
+#
+# MyTK.mainloop()
+
+# pyinstaller
+# $FileName$
+
+# jupyter notebook
+# from bokeh.plotting import figure, output_notebook, show
+#
+# # output to notebook
+# output_notebook()
+#
+# # create figure
+# p = figure(plot_width=400, plot_height=400)
+#
+# # add a circle renderer with
+# # size, color and alpha
+# p.circle([1, 2, 3, 4, 5], [4, 7, 1, 6, 3],
+#          size=10, color="navy", alpha=0.5)
+#
+# # show the results
+# show(p)
+
