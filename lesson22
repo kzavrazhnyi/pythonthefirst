@@ -1,0 +1,83 @@
+# # jupyter notebook
+# from bokeh.plotting import figure, output_notebook, show
+#
+# # output to notebook
+# output_notebook()
+#
+# # create figure
+# p = figure(plot_width=400, plot_height=400)
+#
+# # add a line renderer
+# p.line([1, 2, 3, 4, 5], [3, 1, 2, 6, 5],
+#        line_width=2, color="green")
+#
+# # show the results
+# show(p)
+
+# import numpy as np
+# from bokeh.plotting import figure, show, output_notebook
+#
+# N = 500
+# x = np.linspace(0, 10, N)
+# y = np.linspace(0, 10, N)
+# xx, yy = np.meshgrid(x, y)
+# d = np.sin(xx)*np.cos(yy)
+#
+# p = figure(tooltips=[("x", "$x"), ("y", "$y"), ("value", "@image")])
+# p.x_range.range_padding = p.y_range.range_padding = 0
+#
+# # треба надати вектор даних про зображення для параметра зображення
+# # must give a vector of image data for image parameter
+# p.image(image=[d], x=0, y=0, dw=10, dh=10, palette="Spectral11")
+#
+# output_notebook()
+#
+# show(p)
+
+# Міні завдання (Mini tasks)
+
+# Умови за допомогою операторів if-else та elif (else if)
+# Terms using if-else and elif (else if) operators
+# a = int(input("Введіть а: "))
+# b = int(input("Введіть b: "))
+# if b % a == 0 :
+#     print("b ділиться на a")
+# elif b + 1 == 10:
+#     print("Збільшення в b дає 10")
+# else:
+#     print("Інакше")
+
+# Написати функцію CheckDivisibility
+# Write the CheckDivisibility function
+# a = int(input("Введіть а: "))
+# b = int(input("Введіть b: "))
+# def CheckDivisibility(a, b):
+#     if a % b == 0 :
+#         print("a ділиться на b")
+#     else:
+#         print("a не ділиться на b")
+#
+# CheckDivisibility(a, b)
+
+# # Імпортуйте бібліотеку pandas, перейменовану на pd
+# # Import the pandas library, renamed as pd
+# import pandas as pd
+#
+# # віднесення трьох рядів до s1, s2, s3
+# # assigning three series to s1, s2, s3
+# s1 = pd.Series([0, 4, 8])
+# s2 = pd.Series([1, 5, 9])
+# s3 = pd.Series([2, 6, 10])
+#
+# # прийняття значень індексу та стовпців
+# # taking index and column values
+# dframe = pd.DataFrame([s1, s2, s3])
+#
+# # призначити ім'я стовпця
+# # assign column name
+# dframe.columns = ['Geeks', 'For', 'Geeks']
+#
+# # записувати дані у файл CSV
+# # write data to csv file
+# dframe.to_csv('geeksforgeeks.csv', index=False)
+# dframe.to_csv('geeksforgeeks1.csv', index=True)
