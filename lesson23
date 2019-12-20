@@ -1,0 +1,95 @@
+# from tkinter import *
+# import time
+# class GameOfMotion:
+#     def __init__(self):
+#         self.tk = Tk()
+#         self.tk.title("Гра в рух")
+#         self.tk.resizable(0, 0)
+#         self.tk.wm_attributes("-topmost", 1)
+#         self.canvas = Canvas(self.tk, width=500, height=500, \
+#             highlightthickness=0)
+#         self.canvas.pack()
+#         self.canvas_height = 500
+#         self.canvas_width = 500
+#         self.tk.update()
+#         # MyBackground 100 на 100 пікселів
+#         # MyBackground 100 by 100 pixels
+#         self.bg = PhotoImage(file="MyBackground.gif")
+#         w = self.bg.width()
+#         h = self.bg.height()
+#         for x in range(0, 5):
+#             for y in range(0, 5):
+#                 self.canvas.create_image(x * w, y * h, \
+#                     image=self.bg, anchor='nw')
+#
+#     def mainloop(self):
+#         while True:
+#             self.tk.update_idletasks()
+#             self.tk.update()
+#             time.sleep(0.01)
+#
+# MyGame = GameOfMotion()
+# MyGame.mainloop()
+
+# Міні завдання (Mini tasks)
+
+# # Функція збільшення ваги щороку def MyWeight
+# # повинна приймати два параметри: вагу і збільшення
+# # The function of weight gain every year def MyWeight
+# # should accept two parameters: the weight and increase
+#
+# def MyWeight(weight, increase):
+#     for year in range(1, 10):
+#         weight = weight + increase
+#         print('Рік %s вага %s' % (year, weight))
+#
+# weight = float(input("Введіть вагу: "))
+# increase = float(input("Введіть збільшення: "))
+# MyWeight(weight,increase)
+
+# # Глобальні та локальні змінні
+# # Global and Local Variables
+# a = int(input("Введіть а: "))
+# # f() використовується глобально, оскільки немає локального "a"
+# # f() uses global because there is no local 'a'
+# def f():
+# 	print('Всередині f() : ', a)
+# # g() змінна "a" визначена як локальна
+# # g() variable 'a' is redefined as a local
+# def g():
+# 	a = 2
+# 	print('Всередині g() : ',a)
+# # h() використовує глобальне ключове слово для зміни глобального 'a'
+# # h() uses global keyword to modify global 'a'
+# def h():
+# 	global a
+# 	a = 3
+# 	print('Всередині h() : ',a)
+# # Глобальна сфера застосування
+# # Global scope
+# print('global: ',a)
+# f()
+# print('global: ',a)
+# g()
+# print('global: ',a)
+# h()
+# print('global : ',a)
+
+# # Numpy - це універсальний пакет для обробки масивів
+# # Numpy is a universal package for processing arrays.
+# # Створення масивів
+# # Creation of Arrays
+# import numpy as np
+#
+# # Creating a rank 1 Array
+# arr = np.array([1, 2, 3])
+# print("Масив з рангом 1: \n", arr)
+#
+# # Creating a rank 2 Array
+# arr = np.array([[1, 2, 3],
+#                 [4, 5, 6]])
+# print("Масив з рангом 2: \n", arr)
+#
+# # Creating an array from tuple
+# arr = np.array((1, 3, 2))
+# print("\nМасив, створений за допомогою кортежу \n", arr)
