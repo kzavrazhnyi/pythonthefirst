@@ -1,0 +1,152 @@
+
+# # This is an example of PACKING. All arguments passed
+# # to fun2 are packed into tuple *args.
+# # Це приклад ПАКУВАННЯ. Усі аргументи передані
+# # to fun2 упаковані в кортежі *args.
+# def fun1(a, b, c):
+#     print(a, b, c)
+# def fun2(*args):
+#     # Перетворити аргументи, вкладені в список, щоб ми могли його змінити
+#     # Convert args tuple to a list so we can modify it
+#     args = list(args)
+#
+#     # Модифікація аргументів
+#     # Modifying args
+#     args[0] = 'До побачення'
+#     args[1] = 'чудовий'
+#
+#     # Розпакування аргументів і виклик fun1()
+#     # UNPACKING args and calling fun1()
+#     fun1(*args)
+#
+# fun2('Привіт', 'навколишній', 'світ!')
+
+# # ** використовується для словників
+# # ** used for dictionaries
+# # Демонструйте розпакування елементів словника за допомогою **
+# # Demonstrate unpacking of dictionary items using **
+# def fun(a, b, c):
+#     print(a, b, c)
+#
+# # A call with unpacking of dictionary
+# d = {'a': 2, 'b': 4, 'c': 10}
+# fun(**d)
+
+# Міні завдання (Mini tasks)
+
+# # Функція mySum використовує упаковку для підсумовування
+# # невідомої кількісті аргументів
+# # Function mySum uses packing to sum
+# # unknown number of arguments
+# def mySum(*args):
+#     sum = 0
+#     for i in range(0, len(args)):
+#         sum = sum + args[i]
+#     return sum
+#
+# print(mySum(1, 2, 3, 4, 5))
+# print(mySum(10, 20))
+
+# # Продемонструвати пакування предметів зі словника за допомогою **
+# # Demonstrate packing of dictionary items using **
+# def fun(**kwargs):
+#     # kwargs це dict
+#     # kwargs is a dict
+#     print(type(kwargs))
+#     # Друк елементів словника
+#     # Printing dictionary items
+#     for key in kwargs:
+#         print("%s = %s" % (key, kwargs[key]))
+#
+# fun(name="dictionary", ID="101", language="Python")
+
+# Машинне навчання (Machine Learning)
+
+# Лінійна регресія - це статистичний підхід для моделювання
+# відносин між залежною змінною із заданим набором незалежних змінних
+# Linear regression is a statistical approach for modeling the relationship
+# between a dependent variable with a given set of independent variables
+# Передбачається, що дві змінні лінійно пов'язані
+# Завдання полягає в тому, щоб знайти лінію, яка найкраще підходить
+# на графіку розсіювання, щоб ми могли передбачити відповідь для будь-яких
+# нових значень характеристик. (Тобто значення x відсутній в наборі даних)
+# Ця лінія називається лінією регресії.
+# It is assumed that the two variables are linearly related.
+# The task is to find the line that works best
+# on the scatter plot so we can predict the answer for anyone
+# new values of characteristics. (That is, x is not present in the dataset)
+# This line is called the regression line.
+# Необхідно оцінити значення коефіцієнтів регресії b_0 і b_1
+# використовуючи техніку найменших квадратів
+# It is necessary to estimate the values of the regression coefficients
+# b_0 and b_1 using the least squares technique
+
+# Давайте розглянемо набір даних,
+# в якому у нас є значення відповіді y для кожної ознаки x
+# Let's look at a data set in which we have
+# a response value y for each attribute x
+
+# import numpy as np
+# import matplotlib.pyplot as plt
+#
+# def EstimateCoef(x, y):
+#     # кількість спостережень / точок
+#     # number of observations/points
+#     n = np.size(x)
+#
+#     # середнє значення x та y вектора
+#     # mean of x and y vector
+#     m_x, m_y = np.mean(x), np.mean(y)
+#
+#     # обчислення поперечного відхилення та відхилення приблизно х
+#     # calculating cross-deviation and deviation about x
+#     SS_xy = np.sum(y * x) - n * m_y * m_x
+#     SS_xx = np.sum(x * x) - n * m_x * m_x
+#
+#     # обчислення коефіцієнтів регресії
+#     # calculating regression coefficients
+#     b_1 = SS_xy / SS_xx
+#     b_0 = m_y - b_1 * m_x
+#
+#     return (b_0, b_1)
+#
+# def PlotRegressionLine(x, y, b):
+#     # побудова фактичних точок як розкидання сюжету
+#     # plotting the actual points as scatter plot
+#     plt.scatter(x, y, color="m",
+#                 marker="o", s=30)
+#
+#     # передбачений вектор відгуку
+#     # predicted response vector
+#     y_pred = b[0] + b[1] * x
+#
+#     # побудова лінії регресії
+#     # plotting the regression line
+#     plt.plot(x, y_pred, color="g")
+#
+#     # ставимо мітки
+#     # putting labels
+#     plt.xlabel('x')
+#     plt.ylabel('y')
+#
+#     # функція для відображення
+#     # function to show plot
+#     plt.show()
+#
+# def main():
+#     # спостереження
+#     # observations
+#     x = np.array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])
+#     y = np.array([1, 3, 2, 5, 7, 8, 8, 9, 10, 12])
+#
+#     # оцінка коефіцієнтів
+#     # estimating coefficients
+#     b = EstimateCoef(x, y)
+#     print("Розрахункові коефіцієнти:\nb_0 = {}  \
+#     \nb_1 = {}".format(b[0], b[1]))
+#
+#     # побудова лінії регресії
+#     # plotting regression line
+#     PlotRegressionLine(x, y, b)
+#
+# main()
