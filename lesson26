@@ -1,0 +1,199 @@
+# import time
+# from tkinter import *
+# MyTk = Tk()
+# canvas = Canvas(MyTk, width=500, height=500)
+# canvas.pack()
+# # Створюємо трикутник за допомогою виклику create_polygon
+# # We create a triangle by calling create_polygon
+# canvas.create_polygon(10, 10, 10, 60, 50, 35)
+# def MyMove(MyX, MyY):
+#     for counter in range(0, 90):
+#         canvas.move(1, MyX, MyY)
+#         # Оновлення (перерисовка) зображення на екрані
+#         MyTk.update()
+#         time.sleep(0.01)
+# MyMove(5, 5); MyMove(-5, -5)
+# MyMove(5, 0); MyMove(-5, 0)
+# MyTk.mainloop()
+
+# імпортувати все з модуля tkinter
+# import everything from tkinter module
+from tkinter import *
+
+# глобально оголосити змінну
+# globally declare the expression variable
+expression = ""
+
+# Функція для оновлення виразу
+# у полі для введення тексту
+# Function to update expressiom
+# in the text entry box
+def press(num):
+
+    # вказати змінну глобального вираження
+    # point out the global expression variable
+    global expression
+
+    # конкатенація рядків
+    # concatenation of string
+    expression = expression + str(num)
+
+    # оновіть вираз за допомогою встановленого методу
+    # update the expression by using set method
+    equation.set(expression)
+
+# Функція для оцінки кінцевого виразу
+# Function to evaluate the final expression
+def equalpress():
+    # Спробуйте, використовується
+    # для обробки помилок, таких як нуль
+    # помилка поділу тощо.
+    # Try and except statement is used
+    # for handling the errors like zero
+    # division error etc.
+
+    # Помістіть цей код всередині пробного блоку
+    # що може призвести до помилки
+    # Put that code inside the try block
+    # which may generate the error
+    try:
+
+        global expression
+
+        # eval функція оцінити вираз
+        # та str функції перетворюють результат у строку
+        # eval function evaluate the expression
+        # and str function convert the result
+        # into string
+        total = str(eval(expression))
+
+        equation.set(total)
+
+        # ініціалізувати змінну виразу порожнім рядком
+        # initialze the expression variable
+        # by empty string
+        expression = ""
+
+        # якщо помилка генерується, тоді обробіть
+        # за винятком блоку
+        # if error is generate then handle
+        # by the except block
+    except:
+
+        equation.set(" error ")
+        expression = ""
+
+# Функція для очищення вмісту поля введення тексту
+# Function to clear the contents of text entry box
+def clear():
+    global expression
+    expression = ""
+    equation.set("")
+
+# створити вікно графічного інтерфейсу
+# create a GUI window
+MyTK = Tk()
+
+# встановити колір фону вікна графічного інтерфейсу
+# set the background colour of GUI window
+MyTK.configure(background="light green")
+
+# встановити назву вікна графічного інтерфейсу
+# set the title of GUI window
+MyTK.title("My Calculator")
+
+# встановіть конфігурацію вікна GUI
+# set the configuration of GUI window
+MyTK.geometry("265x125")
+
+# StringVar() - клас змінної ми створюємо екземпляр цього класу
+# StringVar() is the variable class we create an instance of this class
+equation = StringVar()
+
+# створити поле для введення тексту, показ виразу.
+# create the text entry box for showing the expression.
+expression_field = Entry(MyTK, textvariable=equation)
+
+# Для розміщення використовується метод сітки
+# віджети на відповідних позиціях у таблиці як структура.
+# grid method is used for placing the widgets at respective positions
+# in table like structure.
+expression_field.grid(columnspan=4, ipadx=70)
+
+equation.set('enter your expression')
+
+# створити кнопки та розмістити на певному
+# розташування всередині кореневого вікна.
+# коли користувач натискає кнопку, команду або
+# функція, пов'язана з цією кнопкою, виконується.
+# create a Buttons and place at a particular
+# location inside the root window .
+# when user press the button, the command or
+# function affiliated to that button is executed.
+button1 = Button(MyTK, text=' 1 ', fg='black', bg='yellow',
+                 command=lambda: press(1), height=1, width=7)
+button1.grid(row=2, column=0)
+
+button2 = Button(MyTK, text=' 2 ', fg='black', bg='yellow',
+                 command=lambda: press(2), height=1, width=7)
+button2.grid(row=2, column=1)
+
+button3 = Button(MyTK, text=' 3 ', fg='black', bg='yellow',
+                 command=lambda: press(3), height=1, width=7)
+button3.grid(row=2, column=2)
+
+button4 = Button(MyTK, text=' 4 ', fg='black', bg='yellow',
+                 command=lambda: press(4), height=1, width=7)
+button4.grid(row=3, column=0)
+
+button5 = Button(MyTK, text=' 5 ', fg='black', bg='yellow',
+                 command=lambda: press(5), height=1, width=7)
+button5.grid(row=3, column=1)
+
+button6 = Button(MyTK, text=' 6 ', fg='black', bg='yellow',
+                 command=lambda: press(6), height=1, width=7)
+button6.grid(row=3, column=2)
+
+button7 = Button(MyTK, text=' 7 ', fg='black', bg='yellow',
+                 command=lambda: press(7), height=1, width=7)
+button7.grid(row=4, column=0)
+
+button8 = Button(MyTK, text=' 8 ', fg='black', bg='yellow',
+                 command=lambda: press(8), height=1, width=7)
+button8.grid(row=4, column=1)
+
+button9 = Button(MyTK, text=' 9 ', fg='black', bg='yellow',
+                 command=lambda: press(9), height=1, width=7)
+button9.grid(row=4, column=2)
+
+button0 = Button(MyTK, text=' 0 ', fg='black', bg='yellow',
+                 command=lambda: press(0), height=1, width=7)
+button0.grid(row=5, column=0)
+
+plus = Button(MyTK, text=' + ', fg='black', bg='yellow',
+              command=lambda: press("+"), height=1, width=7)
+plus.grid(row=2, column=3)
+
+minus = Button(MyTK, text=' - ', fg='black', bg='yellow',
+               command=lambda: press("-"), height=1, width=7)
+minus.grid(row=3, column=3)
+
+multiply = Button(MyTK, text=' * ', fg='black', bg='yellow',
+                  command=lambda: press("*"), height=1, width=7)
+multiply.grid(row=4, column=3)
+
+divide = Button(MyTK, text=' / ', fg='black', bg='yellow',
+                command=lambda: press("/"), height=1, width=7)
+divide.grid(row=5, column=3)
+
+equal = Button(MyTK, text=' = ', fg='black', bg='yellow',
+               command=equalpress, height=1, width=7)
+equal.grid(row=5, column=2)
+
+clear = Button(MyTK, text='Clear', fg='black', bg='yellow',
+               command=clear, height=1, width=7)
+clear.grid(row=5, column='1')
+
+# запустити графічний інтерфейс
+# start the GUI
+MyTK.mainloop()
