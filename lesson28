@@ -1,0 +1,259 @@
+
+# ------------------------------------
+
+# button.py
+
+import pygame
+
+from game_object import GameObject
+from text_object import TextObject
+import config as MyConf
+
+# Кнопка - це ігровий об'єкт, що має три стани: нормальне, виділене і натиснутий
+class Button(GameObject):
+    def __init__(self, x, y, w, h, text, on_click=lambda x: None, padding=0):
+        super().__init__(x, y, w, h)
+        self.state = 'normal'
+        self.on_click = on_click
+
+        self.text = TextObject(x + padding, y + padding, lambda: text, MyConf.button_text_color, MyConf.font_name, MyConf.font_size)
+
+    @property
+    def back_color(self):
+        return dict(normal=MyConf.button_normal_back_color,
+                    hover=MyConf.button_hover_back_color,
+                    pressed=MyConf.button_pressed_back_color)[self.state]
+
+    def draw(self, surface):
+        pygame.draw.rect(surface, self.back_color, self.bounds)
+        self.text.draw(surface)
+
+    def handle_mouse_event(self, type, pos):
+        if type == pygame.MOUSEMOTION:
+            self.handle_mouse_move(pos)
+        elif type == pygame.MOUSEBUTTONDOWN:
+            self.handle_mouse_down(pos)
+        elif type == pygame.MOUSEBUTTONUP:
+            self.handle_mouse_up(pos)
+
+    def handle_mouse_move(self, pos):
+        if self.bounds.collidepoint(pos):
+            if self.state != 'pressed':
+                self.state = 'hover'
+        else:
+            self.state = 'normal'
+
+    def handle_mouse_down(self, pos):
+        if self.bounds.collidepoint(pos):
+            self.state = 'pressed'
+
+    def handle_mouse_up(self, pos):
+        if self.state == 'pressed':
+            self.on_click(self)
+            self.state = 'hover'
+
+# ------------------------------------
+
+# mypygame.py
+
+# Pygame - це фреймворк мови Python для програмування ігор
+# Головне в іграх - переміщення пікселів на екрані
+# Основний цикл (main loop) гри виконується і оновлює екран через фіксовані інтервали часу (30-60 разів в секунду).
+# Вони називаються частотою кадрів і визначають плавність переміщення.
+# Усередині основного циклу є три основні операції:
+# обробка подій, оновлення стану гри і отрисовка поточного стану на екрані.
+
+import pygame
+
+import config as MyConf
+from game import MyGame
+from button import Button
+
+class Breakout(MyGame):
+    def __init__(self):
+        MyGame.__init__(self, 'MyPyGame', MyConf.screen_width, MyConf.screen_height, MyConf.background_image, MyConf.frame_rate)
+        # self.sound_effects = {name: pygame.mixer.Sound(sound) for name, sound in MyConf.sounds_effects.items()}
+        self.reset_effect = None
+        self.effect_start_time = None
+        self.score = 0
+        self.lives = MyConf.initial_lives
+        self.start_level = False
+        self.paddle = None
+        self.bricks = None
+        self.ball = None
+        self.menu_buttons = []
+        self.is_game_running = False
+        self.CreateObjects()
+        self.points_per_brick = 1
+
+    def CreateMenu(self):
+        def on_play(button):
+            for MyButton in self.menu_buttons:
+                self.objects.remove(MyButton)
+
+            self.is_game_running = True
+            self.start_level = True
+
+        def on_quit(button):
+            self.game_over = True
+            self.is_game_running = False
+            self.game_over = True
+
+        for i, (text, click_handler) in enumerate((('ГРАТИ', on_play), ('ВИХІД', on_quit))):
+            MyButton = Button(MyConf.menu_offset_x,
+                       MyConf.menu_offset_y + (MyConf.menu_button_h + 5) * i,
+                       MyConf.menu_button_w,
+                       MyConf.menu_button_h,
+                       text,
+                       click_handler,
+                       padding=5)
+            self.objects.append(MyButton)
+            self.menu_buttons.append(MyButton)
+            self.mouse_handlers.append(MyButton.handle_mouse_event)
+
+    def CreateObjects(self):
+        self.CreateMenu()
+
+    def update(self):
+        if not self.is_game_running:
+            return
+
+        super().update()
+
+        if self.game_over:
+            self.show_message('ГРА ЗАВЕРШЕНА!', centralized=True)
+
+Breakout().run()
+
+# ------------------------------------
+
+# config.py
+
+import colors
+
+screen_width = 800
+screen_height = 600
+# 930 x 886
+background_image = 'background.jpg'
+
+frame_rate = 90
+
+initial_lives = 3
+
+font_name = 'Arial'
+font_size = 20
+
+button_text_color = colors.WHITE,
+button_normal_back_color = colors.INDIANRED1
+button_hover_back_color = colors.INDIANRED2
+button_pressed_back_color = colors.INDIANRED3
+
+menu_offset_x = 20
+menu_offset_y = 300
+menu_button_w = 80
+menu_button_h = 50
+
+# ------------------------------------
+
+# game.py
+
+import pygame
+import sys
+
+from collections import defaultdict
+
+# Клас MyGame виконується в основному циклі
+class MyGame:
+    # Метод __init __ () ініціалізує сам Pygame, систему шрифтів і звуковий мікшер
+    # створює фонове зображення, основну поверхню (на якій все отрісовивается)
+    # і ігровий таймер з правильною частотою кадрів
+    def __init__(self, caption, width, height, back_image_filename, frame_rate):
+        self.background_image = pygame.image.load(back_image_filename)
+        self.frame_rate = frame_rate
+        self.game_over = False
+        # self.objects зберігає всі ігрові об'єкти, які повинні оновлюватися
+        self.objects = []
+        pygame.mixer.init(44100, -16, 2, 4096)
+        pygame.init()
+        pygame.font.init()
+        self.surface = pygame.display.set_mode((width, height))
+        pygame.display.set_caption(caption)
+        self.clock = pygame.time.Clock()
+        self.keydown_handlers = defaultdict(list)
+        self.keyup_handlers = defaultdict(list)
+        self.mouse_handlers = []
+
+    # update() і draw() обходять всі керовані ігрові об'єкти
+    # і викликають відповідні їм методи
+    def update(self):
+        for MyObject in self.objects:
+            MyObject.update()
+
+    def draw(self):
+        for MyObject in self.objects:
+            MyObject.draw(self.surface)
+
+    # Метод handle_events() слухає події клавіш і миші генеруються Pygame.
+    # Для кожної події він викликає необхідні функції-обробники
+    def handle_events(self):
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+            elif event.type == pygame.KEYDOWN:
+                for handler in self.keydown_handlers[event.key]:
+                    handler(event.key)
+            elif event.type == pygame.KEYUP:
+                for handler in self.keyup_handlers[event.key]:
+                    handler(event.key)
+            elif event.type in (pygame.MOUSEBUTTONDOWN, pygame.MOUSEBUTTONUP, pygame.MOUSEMOTION):
+                for handler in self.mouse_handlers:
+                    handler(event.type, event.pos)
+
+    # Метод run () виконує основний цикл до тих пір, поки game_over не приймає значення True
+    def run(self):
+        while not self.game_over:
+            self.surface.blit(self.background_image, (0, 0))
+
+            self.handle_events()
+            self.update()
+            self.draw()
+
+            # Він оновлює екран, виводити на дисплей весь вміст,
+            # який було підготовлено на поточній ітерації.
+            # Викликає метод clock.tick() для управління тим, коли буде викликана наступна ітерація
+            pygame.display.update()
+            self.clock.tick(self.frame_rate)
+
+
+# ------------------------------------
+
+# text_object.py
+
+import pygame
+
+# TextObject призначений для відображення тексту на екрані
+# Він отримує функцію text_func (), що викликається кожен раз,
+# коли він виводиться і дозволяє нам оновлювати відображення життів і очков.
+class TextObject:
+    def __init__(self, x, y, text_func, color, font_name, font_size):
+        self.pos = (x, y)
+        self.text_func = text_func
+        self.color = color
+        self.font = pygame.font.SysFont(font_name, font_size)
+        self.bounds = self.get_surface(text_func())
+
+    def draw(self, surface, centralized=False):
+        text_surface, self.bounds = self.get_surface(self.text_func())
+        if centralized:
+            pos = (self.pos[0] - self.bounds.width // 2, self.pos[1])
+        else:
+            pos = self.pos
+        surface.blit(text_surface, pos)
+
+    def get_surface(self, text):
+        text_surface = self.font.render(text, False, self.color)
+        return text_surface, text_surface.get_rect()
+
+    def update(self):
+        pass
