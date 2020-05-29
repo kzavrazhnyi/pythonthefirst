@@ -1,0 +1,615 @@
+# ----------------------------------------------------- mypygame
+
+# Pygame - це фреймворк мови Python для програмування ігор
+# Головне в іграх - переміщення пікселів на екрані
+# Основний цикл (main loop) гри виконується і оновлює екран через фіксовані інтервали часу (30-60 разів в секунду).
+# Вони називаються частотою кадрів і визначають плавність переміщення.
+# Усередині основного циклу є три основні операції:
+# обробка подій, оновлення стану гри і отрисовка поточного стану на екрані.
+
+import pygame
+
+import random
+from datetime import datetime, timedelta
+from pygame.rect import Rect
+
+import config as MyConf
+import time
+from ball import Ball
+from brick import Brick
+from game import MyGame
+from button import Button
+from paddle import Paddle
+from text_object import TextObject
+import colors
+
+class Breakout(MyGame):
+    def __init__(self):
+        MyGame.__init__(self, 'MyPyGame', MyConf.screen_width, MyConf.screen_height, MyConf.background_image, MyConf.frame_rate)
+        # self.sound_effects = {name: pygame.mixer.Sound(sound) for name, sound in MyConf.sounds_effects.items()}
+        self.reset_effect = None
+        self.effect_start_time = None
+        self.score = 0
+        self.lives = MyConf.initial_lives
+        self.start_level = False
+        self.paddle = None
+        self.bricks = None
+        self.ball = None
+        self.menu_buttons = []
+        self.is_game_running = False
+        self.CreateObjects()
+        self.points_per_brick = 1
+
+    def add_life(self):
+        self.lives += 1
+
+    def set_points_per_brick(self, points):
+        self.points_per_brick = points
+
+    def change_ball_speed(self, dy):
+        self.ball.speed = (self.ball.speed[0], self.ball.speed[1] + dy)
+
+    def CreateMenu(self):
+        def on_play(button):
+            for MyButton in self.menu_buttons:
+                self.objects.remove(MyButton)
+
+            self.is_game_running = True
+            self.start_level = True
+
+        def on_quit(button):
+            self.game_over = True
+            self.is_game_running = False
+            self.game_over = True
+
+        for i, (text, click_handler) in enumerate((('ГРАТИ', on_play), ('ВИХІД', on_quit))):
+            MyButton = Button(MyConf.menu_offset_x,
+                       MyConf.menu_offset_y + (MyConf.menu_button_h + 5) * i,
+                       MyConf.menu_button_w,
+                       MyConf.menu_button_h,
+                       text,
+                       click_handler,
+                       padding=5)
+            self.objects.append(MyButton)
+            self.menu_buttons.append(MyButton)
+            self.mouse_handlers.append(MyButton.handle_mouse_event)
+
+    def CreateObjects(self):
+        self.create_bricks();
+        self.create_paddle();
+        self.create_ball()
+        self.create_labels()
+        self.CreateMenu()
+
+    def create_labels(self):
+        self.score_label = TextObject(MyConf.score_offset,
+                                      MyConf.status_offset_y,
+                                      lambda: f'РАХУНОК: {self.score}',
+                                      MyConf.text_color,
+                                      MyConf.font_name,
+                                      MyConf.font_size)
+        self.objects.append(self.score_label)
+        self.lives_label = TextObject(MyConf.lives_offset,
+                                      MyConf.status_offset_y,
+                                      lambda: f'ЖИТТЯ: {self.lives}',
+                                      MyConf.text_color,
+                                      MyConf.font_name,
+                                      MyConf.font_size)
+        self.objects.append(self.lives_label)
+
+    def create_ball(self):
+        speed = (random.randint(-2, 2), MyConf.ball_speed)
+        self.ball = Ball(MyConf.screen_width // 2,
+                         MyConf.screen_height // 2,
+                         MyConf.ball_radius,
+                         MyConf.ball_color,
+                         speed)
+        self.objects.append(self.ball)
+
+    def create_paddle(self):
+        paddle = Paddle((MyConf.screen_width - MyConf.paddle_width) // 2,
+                        MyConf.screen_height - MyConf.paddle_height * 2,
+                        MyConf.paddle_width,
+                        MyConf.paddle_height,
+                        MyConf.paddle_color,
+                        MyConf.paddle_speed)
+        self.keydown_handlers[pygame.K_LEFT].append(paddle.handle)
+        self.keydown_handlers[pygame.K_RIGHT].append(paddle.handle)
+        self.keyup_handlers[pygame.K_LEFT].append(paddle.handle)
+        self.keyup_handlers[pygame.K_RIGHT].append(paddle.handle)
+        self.paddle = paddle
+        self.objects.append(self.paddle)
+
+    def create_bricks(self):
+        w = MyConf.brick_width
+        h = MyConf.brick_height
+        brick_count = MyConf.screen_width // (w + 1)
+        offset_x = (MyConf.screen_width - brick_count * (w + 1)) // 2
+
+        bricks = []
+        for row in range(MyConf.row_count):
+            for col in range(brick_count):
+                effect = None
+                brick_color = MyConf.brick_color
+                index = random.randint(0, 10)
+                # if index < len(special_effects):
+                #     brick_color, start_effect_func, reset_effect_func = list(special_effects.values())[index]
+                #     effect = start_effect_func, reset_effect_func
+
+                brick = Brick(offset_x + col * (w + 1),
+                              MyConf.offset_y + row * (h + 1),
+                              w,
+                              h,
+                              brick_color,
+                              effect)
+                bricks.append(brick)
+                self.objects.append(brick)
+        self.bricks = bricks
+
+    def handle_ball_collisions(self):
+        def intersect(obj, ball):
+            edges = dict(left=Rect(obj.left, obj.top, 1, obj.height),
+                         right=Rect(obj.right, obj.top, 1, obj.height),
+                         top=Rect(obj.left, obj.top, obj.width, 1),
+                         bottom=Rect(obj.left, obj.bottom, obj.width, 1))
+            collisions = set(edge for edge, rect in edges.items() if ball.bounds.colliderect(rect))
+            if not collisions:
+                return None
+
+            if len(collisions) == 1:
+                return list(collisions)[0]
+
+            if 'top' in collisions:
+                if ball.centery >= obj.top:
+                    return 'top'
+                if ball.centerx < obj.left:
+                    return 'left'
+                else:
+                    return 'right'
+
+            if 'bottom' in collisions:
+                if ball.centery >= obj.bottom:
+                    return 'bottom'
+                if ball.centerx < obj.left:
+                    return 'left'
+                else:
+                    return 'right'
+
+        # Hit paddle
+        s = self.ball.speed
+        edge = intersect(self.paddle, self.ball)
+        if edge is not None:
+            pass
+            # self.sound_effects['paddle_hit'].play()
+        if edge == 'top':
+            speed_x = s[0]
+            speed_y = -s[1]
+            if self.paddle.moving_left:
+                speed_x -= 1
+            elif self.paddle.moving_left:
+                speed_x += 1
+            self.ball.speed = speed_x, speed_y
+        elif edge in ('left', 'right'):
+            self.ball.speed = (-s[0], s[1])
+
+        # Hit floor
+        if self.ball.top > MyConf.screen_height:
+            self.lives -= 1
+            if self.lives == 0:
+                self.game_over = True
+            else:
+                self.create_ball()
+
+        # Hit ceiling
+        if self.ball.top < 0:
+            self.ball.speed = (s[0], -s[1])
+
+        # Hit wall
+        if self.ball.left < 0 or self.ball.right > MyConf.screen_width:
+            self.ball.speed = (-s[0], s[1])
+
+        # Hit brick
+        for brick in self.bricks:
+            edge = intersect(brick, self.ball)
+            if not edge:
+                continue
+
+            # self.sound_effects['brick_hit'].play()
+            self.bricks.remove(brick)
+            self.objects.remove(brick)
+            self.score += self.points_per_brick
+
+            if edge in ('top', 'bottom'):
+                self.ball.speed = (s[0], -s[1])
+            else:
+                self.ball.speed = (-s[0], s[1])
+
+            if brick.special_effect is not None:
+                # Reset previous effect if any
+                if self.reset_effect is not None:
+                    self.reset_effect(self)
+
+                # Trigger special effect
+                self.effect_start_time = datetime.now()
+                brick.special_effect[0](self)
+                # Set current reset effect function
+                self.reset_effect = brick.special_effect[1]
+
+    def update(self):
+        if not self.is_game_running:
+            return
+
+        if self.start_level:
+            self.start_level = False
+            self.show_message('НА СТАРТ!', centralized=True)
+
+        if not self.bricks:
+            self.show_message('ГРА ЗАВЕРШЕНА!', centralized=True)
+            self.is_game_running = False
+            self.game_over = True
+            return
+
+        # Reset special effect if needed
+        if self.reset_effect:
+            if datetime.now() - self.effect_start_time >= timedelta(seconds=c.effect_duration):
+                self.reset_effect(self)
+                self.reset_effect = None
+
+        self.handle_ball_collisions()
+        super().update()
+
+        if self.game_over:
+            self.show_message('GAME OVER!', centralized=True)
+
+    def show_message(self, text, color=colors.WHITE, font_name='Arial', font_size=20, centralized=False):
+        message = TextObject(MyConf.screen_width // 2, MyConf.screen_height // 2, lambda: text, color, font_name, font_size)
+        self.draw()
+        message.draw(self.surface, centralized)
+        pygame.display.update()
+        time.sleep(MyConf.message_duration)
+
+Breakout().run()
+
+# ----------------------------------------------------- ball
+
+import pygame
+
+from game_object import GameObject
+
+# М'яч завжди рухається, має швидкість, яка передається для обробки базового класу GameObject.
+# Клас Ball має параметри x і y які позначають його центр, а параметри x і y,
+# що передаються базового класу GameObject є верхнім лівим кутом прямокутника.
+# Досить відняти радіус щоб перетворити центр в верхній лівий кут
+class Ball(GameObject):
+    def __init__(self, x, y, r, color, speed):
+        GameObject.__init__(self, x - r, y - r, r * 2, r * 2, speed)
+        self.radius = r
+        self.diameter = r * 2
+        self.color = color
+
+    def draw(self, surface):
+        r = pygame.draw.circle(surface, self.color, self.center, self.radius)
+
+    def update(self):
+        super().update()
+
+# ----------------------------------------------------- brick
+
+import pygame
+
+from game_object import GameObject
+
+
+class Brick(GameObject):
+    def __init__(self, x, y, w, h, color, special_effect=None):
+        GameObject.__init__(self, x, y, w, h)
+        self.color = color
+        self.special_effect = special_effect
+
+    def draw(self, surface):
+        pygame.draw.rect(surface, self.color, self.bounds)
+
+# ----------------------------------------------------- button
+
+import pygame
+
+from game_object import GameObject
+from text_object import TextObject
+import config as MyConf
+
+# Кнопка - це ігровий об'єкт, що має три стани: нормальне, виділене і натиснутий
+class Button(GameObject):
+    def __init__(self, x, y, w, h, text, on_click=lambda x: None, padding=0):
+        super().__init__(x, y, w, h)
+        self.state = 'normal'
+        self.on_click = on_click
+
+        self.text = TextObject(x + padding, y + padding, lambda: text, MyConf.button_text_color, MyConf.font_name, MyConf.font_size)
+
+    @property
+    def back_color(self):
+        return dict(normal=MyConf.button_normal_back_color,
+                    hover=MyConf.button_hover_back_color,
+                    pressed=MyConf.button_pressed_back_color)[self.state]
+
+    def draw(self, surface):
+        pygame.draw.rect(surface, self.back_color, self.bounds)
+        self.text.draw(surface)
+
+    def handle_mouse_event(self, type, pos):
+        if type == pygame.MOUSEMOTION:
+            self.handle_mouse_move(pos)
+        elif type == pygame.MOUSEBUTTONDOWN:
+            self.handle_mouse_down(pos)
+        elif type == pygame.MOUSEBUTTONUP:
+            self.handle_mouse_up(pos)
+
+    def handle_mouse_move(self, pos):
+        if self.bounds.collidepoint(pos):
+            if self.state != 'pressed':
+                self.state = 'hover'
+        else:
+            self.state = 'normal'
+
+    def handle_mouse_down(self, pos):
+        if self.bounds.collidepoint(pos):
+            self.state = 'pressed'
+
+    def handle_mouse_up(self, pos):
+        if self.state == 'pressed':
+            self.on_click(self)
+            self.state = 'hover'
+
+# ----------------------------------------------------- colors
+
+GREEN = (0, 128, 0)
+INDIANRED1 = (255, 106, 106)
+INDIANRED2 = (238, 99, 99)
+INDIANRED3 = (205, 85, 85)
+WHITE = (255, 255, 255)
+YELLOW1 = (255, 255, 0)
+BLUE2 = (0, 0, 238)
+
+# ----------------------------------------------------- config
+
+import colors
+
+screen_width = 800
+screen_height = 600
+# 930 x 886
+background_image = 'background.jpg'
+
+frame_rate = 90
+
+row_count = 6
+brick_width = 60
+brick_height = 20
+brick_color = colors.GREEN
+offset_y = brick_height + 10
+
+initial_lives = 3
+
+ball_speed = 3
+ball_radius = 8
+ball_color = colors.GREEN
+
+paddle_width = 80
+paddle_height = 20
+paddle_color = colors.BLUE2
+paddle_speed = 6
+
+status_offset_y = 5
+
+text_color = colors.YELLOW1
+lives_right_offset = 85
+lives_offset = screen_width - lives_right_offset
+score_offset = 5
+
+font_name = 'Arial'
+font_size = 20
+
+message_duration = 2
+
+button_text_color = colors.WHITE,
+button_normal_back_color = colors.INDIANRED1
+button_hover_back_color = colors.INDIANRED2
+button_pressed_back_color = colors.INDIANRED3
+
+menu_offset_x = 20
+menu_offset_y = 300
+menu_button_w = 80
+menu_button_h = 50
+
+# ----------------------------------------------------- game
+
+import pygame
+import sys
+
+from collections import defaultdict
+
+# Клас MyGame виконується в основному циклі
+class MyGame:
+    # Метод __init __ () ініціалізує сам Pygame, систему шрифтів і звуковий мікшер
+    # створює фонове зображення, основну поверхню (на якій все отрісовивается)
+    # і ігровий таймер з правильною частотою кадрів
+    def __init__(self, caption, width, height, back_image_filename, frame_rate):
+        self.background_image = pygame.image.load(back_image_filename)
+        self.frame_rate = frame_rate
+        self.game_over = False
+        # self.objects зберігає всі ігрові об'єкти, які повинні оновлюватися
+        self.objects = []
+        pygame.mixer.init(44100, -16, 2, 4096)
+        pygame.init()
+        pygame.font.init()
+        self.surface = pygame.display.set_mode((width, height))
+        pygame.display.set_caption(caption)
+        self.clock = pygame.time.Clock()
+        self.keydown_handlers = defaultdict(list)
+        self.keyup_handlers = defaultdict(list)
+        self.mouse_handlers = []
+
+    # update() і draw() обходять всі керовані ігрові об'єкти
+    # і викликають відповідні їм методи
+    def update(self):
+        for MyObject in self.objects:
+            MyObject.update()
+
+    def draw(self):
+        for MyObject in self.objects:
+            MyObject.draw(self.surface)
+
+    # Метод handle_events() слухає події клавіш і миші генеруються Pygame.
+    # Для кожної події він викликає необхідні функції-обробники
+    def handle_events(self):
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+            elif event.type == pygame.KEYDOWN:
+                for handler in self.keydown_handlers[event.key]:
+                    handler(event.key)
+            elif event.type == pygame.KEYUP:
+                for handler in self.keyup_handlers[event.key]:
+                    handler(event.key)
+            elif event.type in (pygame.MOUSEBUTTONDOWN, pygame.MOUSEBUTTONUP, pygame.MOUSEMOTION):
+                for handler in self.mouse_handlers:
+                    handler(event.type, event.pos)
+
+    # Метод run () виконує основний цикл до тих пір, поки game_over не приймає значення True
+    def run(self):
+        while not self.game_over:
+            self.surface.blit(self.background_image, (0, 0))
+
+            self.handle_events()
+            self.update()
+            self.draw()
+
+            # Він оновлює екран, виводити на дисплей весь вміст,
+            # який було підготовлено на поточній ітерації.
+            # Викликає метод clock.tick() для управління тим, коли буде викликана наступна ітерація
+            pygame.display.update()
+            self.clock.tick(self.frame_rate)
+
+# ----------------------------------------------------- game_object
+
+from pygame.rect import Rect
+
+# GameObject є візуальний об'єкт який знає як зберігати свої границі і рухатися
+class GameObject:
+    def __init__(self, x, y, w, h, speed=(0,0)):
+        self.bounds = Rect(x, y, w, h)
+        self.speed = speed
+
+    @property
+    def left(self):
+        return self.bounds.left
+
+    @property
+    def right(self):
+        return self.bounds.right
+
+    @property
+    def top(self):
+        return self.bounds.top
+
+    @property
+    def bottom(self):
+        return self.bounds.bottom
+
+    @property
+    def width(self):
+        return self.bounds.width
+
+    @property
+    def height(self):
+        return self.bounds.height
+
+    @property
+    def center(self):
+        return self.bounds.center
+
+    @property
+    def centerx(self):
+        return self.bounds.centerx
+
+    @property
+    def centery(self):
+        return self.bounds.centery
+
+    def draw(self, surface):
+        pass
+
+    def move(self, dx, dy):
+        self.bounds = self.bounds.move(dx, dy)
+
+    def update(self):
+        """"""
+        if self.speed == [0, 0]:
+            return
+
+        self.move(*self.speed)
+
+# ----------------------------------------------------- paddle
+
+import pygame
+
+import config as MyConf
+from game_object import GameObject
+
+
+class Paddle(GameObject):
+    def __init__(self, x, y, w, h, color, offset):
+        GameObject.__init__(self, x, y, w, h)
+        self.color = color
+        self.offset = offset
+        self.moving_left = False
+        self.moving_right = False
+
+    def draw(self, surface):
+        pygame.draw.rect(surface, self.color, self.bounds)
+
+    def handle(self, key):
+        if key == pygame.K_LEFT:
+            self.moving_left = not self.moving_left
+        else:
+            self.moving_right = not self.moving_right
+
+    def update(self):
+        if self.moving_left:
+            dx = -(min(self.offset, self.left))
+        elif self.moving_right:
+            dx = min(self.offset, MyConf.screen_width - self.right)
+        else:
+            return
+
+        self.move(dx, 0)
+
+# ----------------------------------------------------- text_object
+
+import pygame
+
+# TextObject призначений для відображення тексту на екрані
+# Він отримує функцію text_func (), що викликається кожен раз,
+# коли він виводиться і дозволяє нам оновлювати відображення життів і очков.
+class TextObject:
+    def __init__(self, x, y, text_func, color, font_name, font_size):
+        self.pos = (x, y)
+        self.text_func = text_func
+        self.color = color
+        self.font = pygame.font.SysFont(font_name, font_size)
+        self.bounds = self.get_surface(text_func())
+
+    def draw(self, surface, centralized=False):
+        text_surface, self.bounds = self.get_surface(self.text_func())
+        if centralized:
+            pos = (self.pos[0] - self.bounds.width // 2, self.pos[1])
+        else:
+            pos = self.pos
+        surface.blit(text_surface, pos)
+
+    def get_surface(self, text):
+        text_surface = self.font.render(text, False, self.color)
+        return text_surface, text_surface.get_rect()
+
+    def update(self):
+        pass
