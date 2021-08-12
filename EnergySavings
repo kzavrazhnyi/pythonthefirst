@@ -1,33 +1,58 @@
 import pandas as pd
-
+import re
+pd.set_option('display.float_format', lambda x: '%.0f' % x)
 wastestats = pd.read_csv("datasets/wastestats.csv")
-wastestats_filter = wastestats[wastestats['waste_type']
-    .isin(['Ferrous Metals','Non-ferrous Metals','Ferrous metal', 'Non-ferrous metal', 'Glass', 'Plastics', 'Plastic'])]
-wastestats_filter = wastestats_filter[wastestats_filter['year'] > 2014].reset_index()
-
-_2018_2019_waste = pd.read_csv("datasets/2018_2019_waste.csv")
-_2018_2019_waste_filter = _2018_2019_waste[_2018_2019_waste['Waste Type']
-    .isin(['Ferrous Metal', 'Glass', 'Plastics', 'Non-Ferrous Metal'])].reset_index()
-_2018_2019_waste_filter = _2018_2019_waste_filter.rename(columns={'Year': 'year','Waste Type': 'waste_type',"Total Recycled ('000 tonnes)": 'total_waste_recycled_tonne'})
-_2018_2019_waste_filter['total_waste_recycled_tonne'] = _2018_2019_waste_filter['total_waste_recycled_tonne'] * 1000
-
-energy_saved = pd.read_csv("datasets/energy_saved.csv")
-energy_saved.columns = energy_saved.iloc[2]
-energy_saved_data = energy_saved.iloc[3:4,1:5].copy()
-energy_saved_data = energy_saved_data.apply(lambda x: x.str.replace(' Kwh', ''))
-energy_saved_data = energy_saved_data.apply(pd.to_numeric)
-energy_saved_data['Plastics'] = energy_saved_data['Plastic']
-energy_saved_data['Ferrous metal'] = energy_saved_data['Ferrous Metal']
+filtered_waste_types={x for x in wastestats['waste_type'] if (re.search('rrous',x)) or(re.search('astic',x) or (re.search('lass',x)))}
+#print(filtered_waste_types)
+wastestats_filter=wastestats[wastestats['waste_type'].isin(filtered_waste_types)]
+#print(filtered_waste_types)
+wastestats_filter=wastestats_filter[wastestats_filter['year'] > 2014].reset_index()
+#print(wastestats_filter)
+_2018_2019_waste = pd.read_csv("datasets/2018_2019_waste.csv" )
+filtered_waste_types={x for x in _2018_2019_waste['Waste Type'] if (re.search('rrous',x)) or(re.search('astic',x) or (re.search('lass',x)))}
+#print(filtered_waste_types)
+_2018_2019_waste_filter=_2018_2019_waste[_2018_2019_waste['Waste Type'].isin(filtered_waste_types)].reset_index()
+#print(_2018_2019_waste_filter)
+_2018_2019_waste_filter=_2018_2019_waste_filter.rename(columns={'Year':'year','Waste Type':'waste_type',"Total Recycled ('000 tonnes)":"total_waste_recycled_tonne"})
+_2018_2019_waste_filter['total_waste_recycled_tonne']=_2018_2019_waste_filter['total_waste_recycled_tonne']*1000
+#to kg ok fine! remove later :(
+energy_saved= pd.read_csv("datasets/energy_saved.csv")
+#print(energy_saved)
+energy_saved.columns=energy_saved.iloc[2]
+#print(energy_saved)
+energy_saved_data= energy_saved.iloc[3:4,1:5].copy()
+#print(energy_saved_data)
+energy_saved_data = energy_saved_data.apply(lambda x: x.str.replace('Kwh',''))
+energy_saved_data = energy_saved_data.apply(lambda x: x.str.replace('KWh',''))
+#print(energy_saved_data)
+energy_saved_data =energy_saved_data.apply(pd.to_numeric)
+#print(energy_saved_data)
+energy_saved_data['Plastics']=energy_saved_data['Plastic']
+energy_saved_data['Ferrous metal']=energy_saved_data['Ferrous Metal']
+energy_saved_data['Ferrous Metals']=energy_saved_data['Ferrous Metal']
 energy_saved_data['Non-ferrous metal'] = energy_saved_data['Non-Ferrous Metal']
+energy_saved_data['Non-ferrous Metals'] = energy_saved_data['Non-Ferrous Metal']
+energy_saved_data['Non-ferrous metals'] = energy_saved_data['Non-Ferrous Metal']
+#print(energy_saved_data)
 energy_saved_data_new = energy_saved_data.T.reset_index()
-energy_saved_data_new = energy_saved_data_new.rename(columns={2: 'waste_type', 3: 'energy_saved'})
+#print(energy_saved_data)
+energy_saved_data_new= energy_saved_data_new.rename(columns={2: 'waste_type', 3: 'energy_saved'})
+#print(energy_saved_data_new)
 energy_saved_data_new.set_index('waste_type',inplace=True)
-
-wastest = pd.merge(wastestats_filter, _2018_2019_waste_filter, how='outer')
-wastest = pd.merge(wastest, energy_saved_data_new, how='outer',left_on='waste_type', right_index=True)
-wastest = wastest.sort_values('year').reset_index(drop = True)
-wastest.set_index('year',inplace=True)
-wastest['total_energy_saved'] = wastest['total_waste_recycled_tonne'] * wastest['energy_saved']
-
+#print(energy_saved_data_new)
+wastest= pd.merge(wastestats_filter,_2018_2019_waste_filter, how='outer')
+#print(wastest)
+wastest= pd.merge(wastest,energy_saved_data_new, how='outer',left_on='waste_type', right_index=True)
+#print(wastest)
+wastest=wastest.sort_values('year').reset_index(drop=True)
+#print(wastest)
+wastest.set_index('year', inplace=True)
+#print(wastest)
+#print(wastest['total_waste_recycled_tonne'])
+wastest['total_energy_saved']=wastest['total_waste_recycled_tonne'] *wastest['energy_saved']
 annual_energy_savings = wastest.groupby(['year'])['total_energy_saved'].sum().reset_index()
+#print(annual_energy_savings)
 annual_energy_savings.set_index('year',inplace=True)
+annual_energy_savings.round(10)
+print(annual_energy_savings)
+#print(energy_saved_data)
