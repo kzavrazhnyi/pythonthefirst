@@ -2,7 +2,9 @@ import pandas as pd
 
 wastestats = pd.read_csv("datasets/wastestats.csv")
 wastestats_filter = wastestats[wastestats['waste_type']
-    .isin(['Ferrous Metals','Non-ferrous Metals','Ferrous metal', 'Non-ferrous metal', 'Glass', 'Plastics', 'Plastic'])]
+    .isin(['Ferrous metal', 'Non-ferrous metal', 'Ferrous Metal', 
+    'Non-ferrous Metals', 'Ferrous Metals', 'Non-ferrous metals', 
+    'Glass', 'Plastics', 'Plastic'])]
 wastestats_filter = wastestats_filter[wastestats_filter['year'] > 2014].reset_index()
 
 _2018_2019_waste = pd.read_csv("datasets/2018_2019_waste.csv")
@@ -18,7 +20,9 @@ energy_saved_data = energy_saved_data.apply(lambda x: x.str.replace(' Kwh', ''))
 energy_saved_data = energy_saved_data.apply(pd.to_numeric)
 energy_saved_data['Plastics'] = energy_saved_data['Plastic']
 energy_saved_data['Ferrous metal'] = energy_saved_data['Ferrous Metal']
+energy_saved_data['Ferrous Metals'] = energy_saved_data['Ferrous Metal']
 energy_saved_data['Non-ferrous metal'] = energy_saved_data['Non-Ferrous Metal']
+energy_saved_data['Non-ferrous metals'] = energy_saved_data['Non-Ferrous Metal']
 energy_saved_data_new = energy_saved_data.T.reset_index()
 energy_saved_data_new = energy_saved_data_new.rename(columns={2: 'waste_type', 3: 'energy_saved'})
 energy_saved_data_new.set_index('waste_type',inplace=True)
