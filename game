@@ -1,0 +1,44 @@
+import tkinter, random, time
+# Створюємо клас для м'яча (Create a ball class)
+class MyBall:
+
+    def __init__(self, canvas, color):
+        self.MyCanvas = canvas
+        self.MyOval = MyCanvas.create_oval(12, 12, 30, 30, fill=color)
+        self.MyCanvas.move(self.MyOval, 300, 400)
+        self.MyY = -2
+        self.CanvasHeight = self.MyCanvas.winfo_height()
+
+    def draw(self):
+        self.MyCanvas.move(self.MyOval, 0, self.MyY)
+        # Отримуємо список координат для елемента (We get the list of coordinates for the element)
+        MyPos = self.MyCanvas.coords(self.MyOval)
+        if MyPos[1] <= 0 or MyPos[3] >= self.CanvasHeight:
+            self.MyY = self.MyY * (-1)
+
+MyTK = tkinter.Tk()
+# Задаємо заголовок (set the title)
+MyTK.title("My game")
+# Розмір вікна фіксований (Fixed window size)
+MyTK.resizable(0, 0)
+# Вікно з полотном розмістити поверх всіх інших вікон
+# (Place a window with a canvas on top of all other windows)
+MyTK.wm_attributes("-topmost", 1)
+# Аргументи bd = 0 і highlightthickness = 0 щоб навколо полотна не було рамки
+# (Arguments bd = 0 and highlightthickness = 0 so that there is no frame around the canvas)
+MyCanvas = tkinter.Canvas(MyTK, width=600, height=500, bd=0,
+                        highlightthickness=0)
+# Полотно змінить розмір відповідно до значень ширини і висоти
+# (the canvas will resize according to the width and height)
+MyCanvas.pack()
+MyTK.update()
+
+MyBall = MyBall(MyCanvas, 'Blue')
+
+while True:
+    MyBall.draw()
+    MyTK.update_idletasks()
+    MyTK.update()
+    time.sleep(0.005)
+
+MyTK.mainloop()
