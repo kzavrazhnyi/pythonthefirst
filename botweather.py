@@ -1,13 +1,14 @@
-# https://tlgrm.ru/docs/bots/api
+# ----------------- botweather.py
 # Free https://openweathermap.org/current
 
 import requests
 import json
 import config as Conf
 
-def AnswerUserBot(MyData):
+def AnswerUserBot(MyData, CurrentTelegramId):
     data = {
-        'chat_id':Conf.MyTelegramId,
+        # 'chat_id':Conf.MyTelegramId,
+        'chat_id': CurrentTelegramId,
         'text':MyData
     }
     BotUrl = Conf.BotUrl.format(method = Conf.TelegramSend)
@@ -25,6 +26,7 @@ def GetWeather(MyLocation):
     OpenWeatherUrl = Conf.OpenWeatherUrl.format(city=MyLocation)
     response = requests.get(OpenWeatherUrl)
     if response.status_code != 200:
+        #print(MyLocation);
         return 'City not found!'
     WeatherData = json.loads(response.content)
     return ParseWeatherData(WeatherData)
@@ -38,30 +40,43 @@ def SaveNewTelegramIdStr(NewTelegramIdStr):
 
 def BotWeather():
     while True:
-        BotUrl = Conf.BotUrl.format(method=Conf.TelegramUpdate)
+        BotUrl = Conf.BotUrl.format(method=Conf.TelegramUpdate.format(update_id=Conf.TelegramUpdateId+1))
         BotContent = requests.get(BotUrl).text
 
         BotData = json.loads(BotContent)
-        SortResult = BotData['result'][::-1]
-        MyMessageResult = None
+        SortResult = BotData['result']
 
         for MyElem in SortResult:
-            if MyElem['message']['chat']['id'] == Conf.MyTelegramId:
-                MyMessageResult = MyElem
-                break
+            if MyElem['message']['text'] != "/start":
+                    NewTelegramId = MyElem['update_id']
+                    if Conf.TelegramUpdateId != NewTelegramId:
+                        Conf.TelegramUpdateId = NewTelegramId
+                        MyWeather = GetWeather(GetMessage(MyElem))
+                        AnswerUserBot(MyWeather, MyElem['message']['chat']['id'])
+                        SaveNewTelegramIdStr(str(NewTelegramId))
 
-        if  MyMessageResult != None:
-            NewTelegramIdStr = str(MyMessageResult['update_id'])
-
-            if not Conf.TelegramUpdateId:
-                with open(Conf.TelegramIdFilePath,'w') as file:
-                    file.write(NewTelegramIdStr)
-
-            if Conf.TelegramUpdateId != NewTelegramIdStr:
-                Conf.TelegramUpdateId = NewTelegramIdStr
-                MyMessage = GetMessage(MyMessageResult)
-                MyWeather = GetWeather(MyMessage)
-                AnswerUserBot(MyWeather)
-                SaveNewTelegramIdStr(NewTelegramIdStr)
 
 BotWeather()
+
+# ----------------- config.py
+
+# WeatherMyPythonBot
+Token = ''
+BotUrl = 'https://api.telegram.org/bot'+Token+'/{method}'
+
+TelegramIdFilePath = 'telegram_id'
+
+with open(TelegramIdFilePath) as file:
+    TelegramUpdateId = file.readline()
+    TelegramUpdateId = int(TelegramUpdateId)
+
+TelegramUpdate = 'getUpdates?offset={update_id}'
+TelegramSend = 'sendMessage'
+
+with open('weather_token') as file:
+    OpenWeatherToken = file.readline()
+
+OpenWeatherUrl = 'http://api.openweathermap.org/data/2.5/weather?q={city}&units=metric&appid='+OpenWeatherToken
+
+# ----------------- telegram_id
+# ----------------- weather_token
