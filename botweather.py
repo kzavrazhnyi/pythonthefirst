@@ -1,5 +1,4 @@
 # ----------------- botweather.py
-# Free https://openweathermap.org/current
 
 import requests
 import json
@@ -7,7 +6,6 @@ import config as Conf
 
 def AnswerUserBot(MyData, CurrentTelegramId):
     data = {
-        # 'chat_id':Conf.MyTelegramId,
         'chat_id': CurrentTelegramId,
         'text':MyData
     }
@@ -26,7 +24,6 @@ def GetWeather(MyLocation):
     OpenWeatherUrl = Conf.OpenWeatherUrl.format(city=MyLocation)
     response = requests.get(OpenWeatherUrl)
     if response.status_code != 200:
-        #print(MyLocation);
         return 'City not found!'
     WeatherData = json.loads(response.content)
     return ParseWeatherData(WeatherData)
@@ -79,4 +76,7 @@ with open('weather_token') as file:
 OpenWeatherUrl = 'http://api.openweathermap.org/data/2.5/weather?q={city}&units=metric&appid='+OpenWeatherToken
 
 # ----------------- telegram_id
+0
+
 # ----------------- weather_token
+# https://home.openweathermap.org/api_keys
