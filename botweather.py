@@ -58,6 +58,8 @@ BotWeather()
 # ----------------- config.py
 
 # WeatherNew2023_bot
+# https://home.openweathermap.org/api_keys
+
 Token = ''
 BotUrl = 'https://api.telegram.org/bot'+Token+'/{method}'
 
@@ -79,4 +81,4 @@ OpenWeatherUrl = 'http://api.openweathermap.org/data/2.5/weather?q={city}&units=
 0
 
 # ----------------- weather_token
-# https://home.openweathermap.org/api_keys
+
