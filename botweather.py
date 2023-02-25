@@ -57,7 +57,7 @@ BotWeather()
 
 # ----------------- config.py
 
-# WeatherMyPythonBot
+# WeatherNew2023_bot
 Token = ''
 BotUrl = 'https://api.telegram.org/bot'+Token+'/{method}'
 
