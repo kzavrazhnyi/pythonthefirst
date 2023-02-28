@@ -52,14 +52,18 @@ def BotWeather():
             except:
                 continue
             if MyElemMes['text'] == "/start":
-                    SaveNewTelegramIdStr(str(NewTelegramId))
+                Conf.TelegramUpdateId = NewTelegramId
+                SaveNewTelegramIdStr(str(NewTelegramId))
             else:
-                    NewTelegramId = MyElem['update_id']
-                    if Conf.TelegramUpdateId != NewTelegramId:
-                        Conf.TelegramUpdateId = NewTelegramId
-                        MyWeather = GetWeather(GetMessage(MyElem))
-                        AnswerUserBot(MyWeather, MyElemMes['chat']['id'])
-                        SaveNewTelegramIdStr(str(NewTelegramId))
+                NewTelegramId = MyElem['update_id']
+                if Conf.TelegramUpdateId != NewTelegramId:
+                    Conf.TelegramUpdateId = NewTelegramId
+                    MyMessage = GetMessage(MyElem)
+                    MyWeather = GetWeather(MyMessage)
+                    print("From: " + MyElemMes['from']['first_name']
+                          + " Message: " + MyMessage + " Answer: " + MyWeather)
+                    AnswerUserBot(MyWeather, MyElemMes['chat']['id'])
+                    SaveNewTelegramIdStr(str(NewTelegramId))
 
 
 BotWeather()
