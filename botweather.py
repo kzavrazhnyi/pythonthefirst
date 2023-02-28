@@ -1,5 +1,7 @@
 # ----------------- botweather.py
 
+# Free https://openweathermap.org/current
+
 import requests
 import json
 import config as Conf
@@ -44,12 +46,19 @@ def BotWeather():
         SortResult = BotData['result']
 
         for MyElem in SortResult:
-            if MyElem['message']['text'] != "/start":
+            NewTelegramId = MyElem['update_id']
+            try:
+                MyElemMes = MyElem['message']
+            except:
+                continue
+            if MyElemMes['text'] == "/start":
+                    SaveNewTelegramIdStr(str(NewTelegramId))
+            else:
                     NewTelegramId = MyElem['update_id']
                     if Conf.TelegramUpdateId != NewTelegramId:
                         Conf.TelegramUpdateId = NewTelegramId
                         MyWeather = GetWeather(GetMessage(MyElem))
-                        AnswerUserBot(MyWeather, MyElem['message']['chat']['id'])
+                        AnswerUserBot(MyWeather, MyElemMes['chat']['id'])
                         SaveNewTelegramIdStr(str(NewTelegramId))
 
 
