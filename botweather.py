@@ -38,31 +38,49 @@ def SaveNewTelegramIdStr(NewTelegramIdStr):
         file.write(NewTelegramIdStr)
 
 def BotWeather():
+    # виконувати цикл нескінченно до перерви програми
     while True:
+        # Сформувати строку запиту на отримання оновлень даних бота
+        # беремо останній ID запиту бота і додаємо 1
         BotUrl = Conf.BotUrl.format(method=Conf.TelegramUpdate.format(update_id=Conf.TelegramUpdateId+1))
+        # Виконуємо запит і отримаємо дані в форматі json
         BotContent = requests.get(BotUrl).text
 
+        # Читаємо отримані дані в структуру
         BotData = json.loads(BotContent)
+        # З даних беремо елемент result
         SortResult = BotData['result']
 
+        # Перебираємо елементи пакету даних бота
         for MyElem in SortResult:
+            # Отримаємо Id елемента
             NewTelegramId = MyElem['update_id']
+            # Блок отримання елемента message з перевіркою на помилку
             try:
+                # Отримаємо елемент message
                 MyElemMes = MyElem['message']
+            # Виключення якщо помилка
             except:
+                # Продовжити цикл
                 continue
+            # Якщо text елемента це /start пропускаємо аналіз і записуємо перевірений Id в файл
             if MyElemMes['text'] == "/start":
                 Conf.TelegramUpdateId = NewTelegramId
                 SaveNewTelegramIdStr(str(NewTelegramId))
-            else:
-                NewTelegramId = MyElem['update_id']
-                if Conf.TelegramUpdateId != NewTelegramId:
+            # інакше якщо збережений перевірений Id не дорівнює новому тоді
+            elif Conf.TelegramUpdateId != NewTelegramId:
+                    # зберігаємо новий Id
                     Conf.TelegramUpdateId = NewTelegramId
+                    # отримаємо повідомлення бота
                     MyMessage = GetMessage(MyElem)
+                    # передаємо повідомлення бота для запиту прогнозу погоди
                     MyWeather = GetWeather(MyMessage)
+                    # виводимо на печать інформацію від кого повідомелення та відповідь на нього
                     print("From: " + MyElemMes['from']['first_name']
                           + " Message: " + MyMessage + " Answer: " + MyWeather)
+                    # передаємо відповідь в бот
                     AnswerUserBot(MyWeather, MyElemMes['chat']['id'])
+                    # записуємо в файл Id обробленого повідомлення
                     SaveNewTelegramIdStr(str(NewTelegramId))
 
 
