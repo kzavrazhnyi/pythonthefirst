@@ -7,33 +7,50 @@ import json
 import config as Conf
 
 def AnswerUserBot(MyData, CurrentTelegramId):
+    # формуємо структуру відповіді
     data = {
+        # ідентификатор чату куда відправити відповідь
         'chat_id': CurrentTelegramId,
+        # відповідь
         'text':MyData
     }
+    # формуємо строку запиту
     BotUrl = Conf.BotUrl.format(method = Conf.TelegramSend)
+    # передаємо дані відповіді
     requests.post(BotUrl, data=data)
 
 def ParseWeatherData(MyData):
+    # створюємо змінну путим значенням строки
     WeatherState = ''
+    # заповнюємо змінну стану
     for MyElem in MyData['weather']:
         WeatherState = MyElem['main']
+    # заповнюємо змінну температури
     WeatherTemp = MyData['main']['temp']
+    # заповнюємо змінну місто
     WeatherCity = MyData['name']
+    # заповнюємо даними змінних форматовану строку та повертаємо відвідь функції
     return f'The weather in {WeatherCity}: Temp is {WeatherTemp}, state is {WeatherState}'
 
 def GetWeather(MyLocation):
+    # формуємо строку запиту
     OpenWeatherUrl = Conf.OpenWeatherUrl.format(city=MyLocation)
+    # передаем запит та отримажмо відповідь
     response = requests.get(OpenWeatherUrl)
+    # якщо не 200 статус то помилка
     if response.status_code != 200:
         return 'City not found!'
+    # читаємо відповідь
     WeatherData = json.loads(response.content)
+    # повертаємо оброблену відповідь
     return ParseWeatherData(WeatherData)
 
 def GetMessage(MyData):
+    # повертаю текст повідомлення
     return MyData['message']['text']
 
 def SaveNewTelegramIdStr(NewTelegramIdStr):
+    # записати в фацл новий оброблений идентифікатор запиту
     with open(Conf.TelegramIdFilePath, 'w') as file:
         file.write(NewTelegramIdStr)
 
@@ -75,6 +92,14 @@ def BotWeather():
                     MyMessage = GetMessage(MyElem)
                     # передаємо повідомлення бота для запиту прогнозу погоди
                     MyWeather = GetWeather(MyMessage)
+                    # try:
+                    #     MyWeather = str(eval(MyMessage))
+                    # except:
+                    # # Продовжити цикл
+                    #     ErrorMessage = "Error eval: " + MyMessage
+                    #     print("From: " + MyElemMes['from']['first_name'] + " " + ErrorMessage)
+                    #     AnswerUserBot(ErrorMessage, MyElemMes['chat']['id'])
+                    #     continue
                     # виводимо на печать інформацію від кого повідомелення та відповідь на нього
                     print("From: " + MyElemMes['from']['first_name']
                           + " Message: " + MyMessage + " Answer: " + MyWeather)
