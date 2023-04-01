@@ -1,0 +1,138 @@
+https://www.datacamp.com/cheat-sheet/chatgpt-cheat-sheet-data-science
+https://github.com/travistangvh/ChatGPT-Data-Science-Prompts
+
+Data generation & creatings tables
+
+I want you to act as a data generator. Can you write SQL queries in PostgreSQL 14 that
+create a table "customers" with the columns "customer_id", "username", "email",
+"join_date", "last_purchase_date". Include relevant constraints and index.
+
+---
+
+Common table expressions
+
+I want you to act as a SQL code programmer. | am running PostgreSQL 14. Can you rewrite
+this query using CTE?
+
+SELECT DISTINCT Customer.Custld
+, Customer.Name
+, Customer.EMailAddr
+FROM Customer
+WHERE
+EMailAddr IN (
+SELECT EmailAddr
+FROM Customer
+WHERE EMailAddr ILIKE '%GMAIL%' OR EMailAddr ILIKE '%YAHOO%'
+GROUP BY EmailAddr
+HAVING COUNT(*)>1}
+)
+
+---
+
+Write SQL queries from natural language
+
+I want you to act as a data scientist. | have three PostgreSQL 14 tables "customers" for an
+e-commerce company. The customers table consists of the columns "customer_id",
+"customer_name", "customer_email", "customer_phone", and "customer_address". Using
+"“customer_email", can you count the number of customers who use gmail, outlook, yahoo,
+or other providers?
+
+I want you to act as a data scientist. | have PostgreSQL 14 tables "sales" for an e-
+commerce company. The sales table consists of the columns "customer_id",
+"product_id", "sale_date", "sale_quantity". Can you please write a query that finds the 7-
+day running average of sale_quantity?
+
+I want you to act as a data scientist. | have three PostgreSQL 14 tables "sales" for an e-
+commerce company. The sales table consists of the columns "customer_id",
+"product_id", "sale_date", "sale_quantity". Can you please write a query that finds the
+difference between the sale_quantity of that day and the average sale_quantity?
+
+---
+
+Data generation workflow
+
+I want you to act as a data generator in python. Can you generate a Markdown file that
+contains mock employee data containing the columns employee_id, name,
+department_id, email, join_date, current_salary. Save the file to ‘employee.md’
+
+I want you to act as a data generator in python. Can you generate a CSV file that contains
+mock employee data containing the columns employee_id, name, department_id, email,
+join_date, current_salary. Save the file to ‘employee.csv’
+
+I want you to act as a data generator in python. Can you generate a JSON file that
+contains mock employee data containing the columns employee_id, name,
+department_id, email, join_date, current_salary. Save the file to ‘employee.json’
+
+---
+
+Data cleaning workflow
+
+I want you to act as a data scientist programming in Python Pandas. Given a CSV file that
+contains data of "customers" information with the columns "customer_id",
+"customer_name", "customer_email", "customer_phone", "customer_address" for an e-
+commerce company, write code to clean the data? Please remove rows with customer_id,
+and replace null customer_name with “UNKNOWN”.
+
+---
+
+Data analysis workflow in pandas
+
+I want you to act as a data scientist programming in Python Pandas. Given a table "sales"
+for an e-commerce company that consists of the columns "customer_id", "product_id", "sale_date", "sale_quantity", can you please write a query that finds the most popular product_id in January?
+
+I want you to act as a data scientist programming in Python Pandas. Given a table "sales"
+for an e-commerce company that consists of the columns "customer_id", "product_id",
+"sale_date", "sale_quantity", and another table “products” with the columns “product_id’,
+“product_name", please merge the two tables and find the name of the most popular product in January.
+
+I want you to act as a data scientist programming in Python Pandas. Given a table "sales"
+for an e-commerce company that consists of the columns "customer_id", "product_id",
+"sale_date", "sale_quantity", and another table “products” with the columns “product_id",
+“product_name", please merge the two tables and find the name of the most popular
+product in January.
+
+---
+
+Data generation workflow
+
+I want you to act as a data generator in R. Can you generate a Markdown file that contains
+mock employee data containing the columns employee_id, name, department_id, email,
+join_date, current_salary. Save the file to ‘employee.md’
+
+I want you to act as a data generator in R. Can you generate a CSV file that contains mock
+employee data containing the columns employee_id, name, department_id, email,
+join_date, current_salary. Save the file to ‘employee.csv'
+
+I want you to act as a data generator in R. Can you generate a JSON file that contains
+mock employee data containing the columns employee_id, name, department_id, email,
+join_date, current_salary. Save the file to ‘employee.json’
+
+---
+
+Data cleaning workflow
+
+I want you to act as a data scientist programming in R tidyr. You are given the ‘employee’
+dataframe containing the columns employee_id, name, department_id, email, join_date,
+current_salary. Write code that drops rows that have any null values and perform other
+data cleaning steps.
+
+---
+
+Data analysis workflow in tidyr
+
+I want you to act as a data scientist programming in R tidyr. You are given the ‘employee’
+dataframe containing the columns employee_id, name, department_id, email, join_date,
+current_salary. Find the year with the most number of new joiners.
+
+I want you to act as a data scientist programming in R tidyr. You are given the ‘employee’
+dataframe containing the columns employee_id, name, department_id, email, join_date,
+current_salary. You also have a ‘department’ dataframe containing the columns
+department_id and department_name. . Find the department_name with the highest median salary.
+
+I want you to act as a data scientist programming in R tidyr. You are given the
+department_expense_2022 dataframe containing the columns department_id, month,
+expense. Please convert the data to a wide format.
+
+I want you to act as a data scientist programming in R tidyr. You are given the
+department_expense_2022 dataframe with the columns ‘department_id' ‘Jan, ‘Feb’ ...,
+‘Dec’ . Please convert this data to a long format.
