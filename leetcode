@@ -1,0 +1,28 @@
+--- Nth Highest Salary
+
+import pandas as pd
+
+def nth_highest_salary(employee: pd.DataFrame, N: int) -> pd.DataFrame:
+    # Сортуємо DataFrame за заробітною платнею у спадаючому порядку
+    sorted_employee = employee.sort_values(by='salary', ascending=False)
+    
+    # Отримуємо унікальні зарплати у спадаючому порядку
+    unique_salaries = sorted_employee['salary'].unique()
+    
+    # Перевіряємо, чи існує запитана n-та найвища зарплата
+    if N <= len(unique_salaries):
+        nth_highest = unique_salaries[N - 1]
+        result_df = pd.DataFrame({'getNthHighestSalary': [nth_highest]})
+    else:
+        result_df = pd.DataFrame({'getNthHighestSalary': [None]})
+    
+    return result_df
+
+# Приклад використання
+data = {'id': [1, 2, 3], 'salary': [100, 200, 300]}
+employee_df = pd.DataFrame(data)
+N = 2
+result = nth_highest_salary(employee_df, N)
+print(result)
+
+--- 
